@@ -1,3 +1,5 @@
 /local/
 /.pytest_cache/
 /**/__pycache__/
+/local-pr-body.md
+/local-static-check.txt

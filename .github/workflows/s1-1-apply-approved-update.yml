@@ -47,8 +47,9 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
+          mkdir -p local
           python scripts/build-s1-1-stabilized.py --check
-          python scripts/check-s1-1-static.py | tee local-static-check.txt
+          python scripts/check-s1-1-static.py | tee local/static-check.txt
           {
             echo "## Summary"
             echo "Applies manually approved S1.1 rule-source or AI-domain changes from an Issue command."
@@ -56,12 +57,12 @@ jobs:
             echo "## Static Check"
             echo
             echo '```text'
-            cat local-static-check.txt
+            cat local/static-check.txt
             echo '```'
             echo
             echo "## Safety"
             echo "This PR must be reviewed and manually merged. It does not include private configs, nodes, subscriptions, accounts, or proxy groups."
-          } > local-pr-body.md
+          } > local/pr-body.md
 
       - name: Create pull request
         id: cpr
@@ -71,7 +72,7 @@ jobs:
           delete-branch: true
           title: "S1.1: apply approved rule source updates"
           commit-message: "S1.1: apply approved rule source updates"
-          body-path: local-pr-body.md
+          body-path: local/pr-body.md
 
       - name: Comment with PR result
         if: github.event_name == 'issue_comment' && steps.cpr.outputs.pull-request-url != ''

@@ -125,6 +125,7 @@
 - PASS - `python scripts\check-ai-domain-health.py` writes `docs/ai-domain-health-report.md` for manual review
 - PASS - `scripts/apply-approved-s1-1-update.py` supports `/approve-s1.1-update`, `/approve-ai-domain example.com`, `/approve-source-update source-id`, `/reject-ai-domain example.com`, and `/reject-source-update source-id`
 - PASS - simulated reject command leaves the generated S1.1 config hash unchanged; local simulation record is not kept in formal decisions
+- PASS - approval workflow writes temporary PR body and static-check output under ignored `local/`, so report artifacts are not included in PR diffs
 
 ## S2 配置结构
 
