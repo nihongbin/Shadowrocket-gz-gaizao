@@ -23,6 +23,40 @@ SECRET_PATTERNS = (
     re.compile(r"subscribe", re.IGNORECASE),
 )
 
+FORBIDDEN_HIJACK_DNS = ("114.114.114.114", "223.5.5.5", "223.6.6.6", "119.29.29.29")
+
+REQUIRED_CHINA_LOGFIX_DOMAINS = (
+    "bytemaimg.com",
+    "bytescm.com",
+    "byteeffecttos.com",
+    "bytemastatic.com",
+    "pangolin-sdk-toutiao1.com",
+    "qznovelvod.com",
+    "qishui.com",
+    "yunxindns.com",
+    "yunxinfw.com",
+    "fqnovelpic.com",
+    "dailygn.com",
+    "miaozhen.com",
+    "snssdk.insta360.com",
+)
+
+REQUIRED_OVERSEAS_PROXY_RULES = (
+    "DOMAIN-SUFFIX,crunchyroll.com,PROXY",
+    "DOMAIN-SUFFIX,snapkit.com,PROXY",
+    "DOMAIN-SUFFIX,revenuecat.com,PROXY",
+    "DOMAIN-SUFFIX,bugsnag.com,PROXY",
+    "DOMAIN-SUFFIX,branch.io,PROXY",
+    "DOMAIN-SUFFIX,singular.net,PROXY",
+    "DOMAIN-SUFFIX,sprig.com,PROXY",
+    "DOMAIN-SUFFIX,instabug.com,PROXY",
+    "DOMAIN-SUFFIX,gorgias.chat,PROXY",
+    "DOMAIN-SUFFIX,gorgias.help,PROXY",
+    "DOMAIN-SUFFIX,ip.net.coffee,PROXY",
+    "DOMAIN-SUFFIX,ipapi.co,PROXY",
+    "DOMAIN-SUFFIX,appsflyersdk.com,PROXY",
+)
+
 
 def fail(message: str, failures: list[str]) -> None:
     failures.append(message)
@@ -40,6 +74,15 @@ def section_names(text: str) -> set[str]:
         if stripped.startswith("[") and stripped.endswith("]"):
             names.add(stripped[1:-1].strip())
     return names
+
+
+def first_index(text: str, needle: str) -> int:
+    index = text.find(needle)
+    return index if index >= 0 else sys.maxsize
+
+
+def config_lines(text: str) -> set[str]:
+    return {line.strip() for line in text.splitlines() if line.strip()}
 
 
 def extract_urls(text: str) -> set[str]:
@@ -125,6 +168,52 @@ def main() -> int:
         ok("S1.1 contains proxy DoH and second-provider fallback")
     else:
         fail("S1.1 missing proxy DoH or second-provider fallback", failures)
+
+    hijack_line = next((line.strip() for line in text.splitlines() if line.strip().lower().startswith("hijack-dns =")), "")
+    if not hijack_line:
+        fail("S1.1 missing hijack-dns line", failures)
+    else:
+        forbidden_dns = [dns for dns in FORBIDDEN_HIJACK_DNS if dns in hijack_line]
+        if forbidden_dns:
+            fail("hijack-dns contains China DNS: " + ", ".join(forbidden_dns), failures)
+        else:
+            ok("hijack-dns excludes China DNS servers")
+
+    lines = config_lines(text)
+    for domain in REQUIRED_CHINA_LOGFIX_DOMAINS:
+        host_present = any(
+            line.startswith(f"{domain} = server:") or line.startswith(f"*.{domain} = server:")
+            for line in lines
+        )
+        direct_rule = f"DOMAIN-SUFFIX,{domain},DIRECT"
+        if host_present and direct_rule in lines:
+            ok(f"S1.1 includes Host + DIRECT for China logfix domain {domain}")
+        else:
+            fail(f"S1.1 missing Host or DIRECT for China logfix domain {domain}", failures)
+
+    if "DOMAIN-SUFFIX,insta360.com,DIRECT" in lines:
+        fail("S1.1 must not DIRECT the whole insta360.com domain", failures)
+    else:
+        ok("S1.1 does not DIRECT the whole insta360.com domain")
+
+    if any(line in lines for line in ("insta360.com = server:223.5.5.5", "*.insta360.com = server:223.5.5.5")):
+        fail("S1.1 must not create Host entries for the whole insta360.com domain", failures)
+    else:
+        ok("S1.1 does not create Host entries for the whole insta360.com domain")
+
+    china_guard_index = first_index(text, "# China-local guard:")
+    for rule in REQUIRED_OVERSEAS_PROXY_RULES:
+        rule_index = first_index(text, rule)
+        if rule_index < china_guard_index:
+            ok(f"S1.1 overseas proxy rule appears before China DIRECT: {rule}")
+        else:
+            fail(f"S1.1 missing overseas proxy rule before China DIRECT: {rule}", failures)
+
+    browserleaks_index = first_index(text, "DOMAIN-SUFFIX,browserleaks.com,PROXY")
+    if browserleaks_index < china_guard_index:
+        ok("browserleaks.com remains PROXY before China DIRECT")
+    else:
+        fail("browserleaks.com is missing or appears after China DIRECT", failures)
 
     if local_private_ignored():
         ok("local/private-configs is covered by .gitignore local rule")

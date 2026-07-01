@@ -27,6 +27,8 @@
 - PASS - required file exists: `references/china-local-domain-seeds.txt`
 - PASS - required file exists: `references/ai-proxy-domain-seeds.txt`
 - PASS - required file exists: `references/ai-proxy-domain-candidates.txt`
+- PASS - required file exists: `references/overseas-proxy-domain-seeds.txt`
+- PASS - required file exists: `references/s1-1-logfix-candidates.md`
 - PASS - required file exists: `references/rule-source-registry.json`
 - PASS - required file exists: `references/rule-source-registry.md`
 - PASS - required file exists: `references/johnshall-whitelist-sources.md`
@@ -107,6 +109,10 @@
 - PASS - S1.1 contains `#proxy` DoH and `block-quic = all-proxy`
 - PASS - S1.1 does not contain iab0x00 remote `RULE-SET`
 - PASS - S1.1 does not contain `rule/QuantumultX/` paths
+- PASS - S1.1 `hijack-dns` does not contain China DNS: `114.114.114.114`, `223.5.5.5`, `223.6.6.6`, `119.29.29.29`
+- PASS - S1.1 includes second-round China logfix domains as `[Host] + DIRECT`
+- PASS - S1.1 includes second-round overseas SDK/service domains as `PROXY` before China-local `DIRECT`
+- PASS - S1.1 does not direct or host-map the whole `insta360.com` domain
 - PASS - S1.1 final non-empty line is `FINAL,PROXY`
 - PASS - S1.1 keeps DNS/IP test-site `PROXY` guard before China-local `DIRECT`
 - PASS - S1.1 keeps overseas account/media `PROXY` and local AI `PROXY` guard before China-local `DIRECT`
@@ -127,6 +133,8 @@
 - PASS - online simulated hash-change run created Issue #1 with severity `P2`
 - PASS - `references/ai-proxy-domain-seeds.txt` enters S1.1 as local AI `PROXY` rules
 - PASS - `references/ai-proxy-domain-candidates.txt` is monitored but does not enter S1.1 automatically
+- PASS - `references/overseas-proxy-domain-seeds.txt` enters S1.1 Account/media guard as local `PROXY` rules
+- PASS - `references/s1-1-logfix-candidates.md` records second-round uncertain domains without adding them to default config
 - PASS - `python scripts\check-ai-domain-health.py` writes `docs/ai-domain-health-report.md` for manual review
 - PASS - AI domain health report omits runtime timestamps to avoid no-op diffs
 - PASS - `scripts/apply-approved-s1-1-update.py` supports `/approve-s1.1-update`, `/approve-ai-domain example.com`, `/approve-source-update source-id`, `/reject-ai-domain example.com`, and `/reject-source-update source-id`
@@ -198,6 +206,9 @@
 - PASS - generated `local/private-configs/desktop-import-2026-07-01/S2-default-strict-app-whitelist.conf`
 - PASS - `local/private-configs/desktop-import-2026-07-01/S2-default-strict-app-whitelist.conf` contains `[General]`, `[Host]`, `[Rule]`, proxy DoH, `block-quic = all-proxy`, and final non-empty line `FINAL,PROXY`
 - PASS - `local/private-configs/desktop-import-2026-07-01/S2-default-strict-app-whitelist.conf` does not contain `[URL Rewrite]`, `[MITM]`, or `GEOIP,CN,DIRECT`
+- PASS - generated `local/private-configs/S1-1-default-lazy-stabilized-logfix.conf`
+- PASS - `local/private-configs/S1-1-default-lazy-stabilized-logfix.conf` contains `[General]`, `[Proxy]`, `[Proxy Group]`, `[Host]`, `[Rule]`, proxy DoH, `block-quic = all-proxy`, and final non-empty line `FINAL,PROXY`
+- PASS - `local/private-configs/S1-1-default-lazy-stabilized-logfix.conf` is under ignored `local/private-configs/` and is not part of public templates
 
 ## 文档规则
 
@@ -216,6 +227,8 @@
 ## 结论
 
 本地静态检查和线上闭环检查通过。S0 公开规则模板、S1 lazy 规则增强模板、S1.1 规则源治理增强模板、S2 严格中国 App 白名单模板、生成脚本、规则源监控脚本、确认后 PR 脚本、GitHub Actions 和私有合并脚本已准备好；私有测试文件已统一收纳到 `local/private-configs/`，不再放桌面。S1 保留为稳定对照组，S2 保留为严格白名单参考，当前主线是 S1.1。私有完整配置、节点、订阅、账号、代理组没有进入仓库或 GitHub Pages；公开链接只发布不含节点和代理组的 S1.1 模板。
+
+S1.1 第二轮日志修正已进入公开模板：删除 `hijack-dns` 中的中国 DNS，新增中国 App 日志域名 `[Host] + DIRECT`，新增海外 SDK/服务域名前置 `PROXY`，并把不确定域名只记录为候选。旧 S1 对照组未覆盖。
 
 - GitHub Pages S1.1 模板：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`
 - raw GitHub 备用链接：`https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`

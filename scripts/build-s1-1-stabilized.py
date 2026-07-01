@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_URL = "https://johnshall.github.io/Shadowrocket-ADBlock-Rules-Forever/lazy.conf"
 DEFAULT_SEEDS_PATH = ROOT / "references" / "china-local-domain-seeds.txt"
 DEFAULT_AI_SEEDS_PATH = ROOT / "references" / "ai-proxy-domain-seeds.txt"
+DEFAULT_OVERSEAS_PROXY_SEEDS_PATH = ROOT / "references" / "overseas-proxy-domain-seeds.txt"
 DEFAULT_OUTPUT_PATH = ROOT / "configs" / "S1-1-scenario-cn-us-lazy-stabilized-v0.conf"
 
 ALLOWED_RULE_TYPES = {
@@ -243,28 +244,28 @@ def read_seed_domains(seeds_path: Path) -> list[str]:
     return sorted(domains)
 
 
-def parse_ai_seed_rule(raw: str) -> tuple[str | None, str | None]:
+def parse_proxy_seed_rule(raw: str, source_label: str) -> tuple[str | None, str | None]:
     cleaned = strip_inline_comment(raw)
     if not cleaned:
         return None, None
     parts = split_rule(cleaned)
     if len(parts) < 2:
-        return None, "malformed-ai-rule"
+        return None, f"malformed-{source_label}-rule"
     rule_type = parts[0].upper()
     if rule_type not in AI_RULE_TYPES:
-        return None, f"unsupported-ai-rule:{rule_type}"
+        return None, f"unsupported-{source_label}-rule:{rule_type}"
     value = parts[1].lower().strip()
     if not value or " " in value or "/" in value:
-        return None, "malformed-ai-value"
+        return None, f"malformed-{source_label}-value"
     return f"{rule_type},{value},PROXY", None
 
 
-def read_ai_proxy_rules(ai_seeds_path: Path) -> tuple[list[str], dict[str, int]]:
+def read_proxy_seed_rules(seeds_path: Path, source_label: str) -> tuple[list[str], dict[str, int]]:
     rules: list[str] = []
     seen: set[str] = set()
     dropped: dict[str, int] = {}
-    for raw in ai_seeds_path.read_text(encoding="utf-8").splitlines():
-        rule, reason = parse_ai_seed_rule(raw)
+    for raw in seeds_path.read_text(encoding="utf-8").splitlines():
+        rule, reason = parse_proxy_seed_rule(raw, source_label)
         if reason:
             dropped[reason] = dropped.get(reason, 0) + 1
             continue
@@ -272,6 +273,14 @@ def read_ai_proxy_rules(ai_seeds_path: Path) -> tuple[list[str], dict[str, int]]
             seen.add(rule)
             rules.append(rule)
     return rules, dropped
+
+
+def read_ai_proxy_rules(ai_seeds_path: Path) -> tuple[list[str], dict[str, int]]:
+    return read_proxy_seed_rules(ai_seeds_path, "ai")
+
+
+def read_overseas_proxy_rules(overseas_proxy_seeds_path: Path) -> tuple[list[str], dict[str, int]]:
+    return read_proxy_seed_rules(overseas_proxy_seeds_path, "overseas")
 
 
 def dns_server_for_domain(domain: str) -> str:
@@ -339,7 +348,13 @@ def format_counts(counts: dict[str, int]) -> str:
     return ", ".join(f"{key}={value}" for key, value in sorted(counts.items()))
 
 
-def build_config(source_text: str, seeds_path: Path, ai_seeds_path: Path, source_url: str) -> str:
+def build_config(
+    source_text: str,
+    seeds_path: Path,
+    ai_seeds_path: Path,
+    overseas_proxy_seeds_path: Path,
+    source_url: str,
+) -> str:
     source_hash = hashlib.sha256(source_text.encode("utf-8")).hexdigest()
     raw_rule_lines = extract_rule_section(source_text)
     lazy_rules, dropped_lazy = normalise_lazy_rules(raw_rule_lines)
@@ -349,6 +364,7 @@ def build_config(source_text: str, seeds_path: Path, ai_seeds_path: Path, source
     account_rules = [f"DOMAIN-SUFFIX,{domain},PROXY" for domain in ACCOUNT_PROXY_DOMAINS]
     test_rules = [f"DOMAIN-SUFFIX,{domain},PROXY" for domain in TEST_PROXY_DOMAINS]
     ai_rules, dropped_ai = read_ai_proxy_rules(ai_seeds_path)
+    overseas_rules, dropped_overseas = read_overseas_proxy_rules(overseas_proxy_seeds_path)
 
     lines = [
         "# S1.1 scenario: S1 lazy direction + governed sources + self-maintained AI rules",
@@ -356,7 +372,7 @@ def build_config(source_text: str, seeds_path: Path, ai_seeds_path: Path, source
         f"# Upstream reference SHA256: {source_hash}",
         "# License: Johnshall upstream uses CC BY-SA 4.0; keep attribution when sharing.",
         "# Metadata is stable: no current runtime timestamp is embedded.",
-        f"# Rule stats: test_proxy={len(test_rules)}, account_proxy={len(account_rules)}, ai_proxy={len(ai_rules)}, china_direct={len(china_direct_rules)}, lazy_kept={len(lazy_rules)}, host={len(host_lines)}, dropped_lazy={format_counts(dropped_lazy)}, dropped_ai={format_counts(dropped_ai)}",
+        f"# Rule stats: test_proxy={len(test_rules)}, account_proxy={len(account_rules)}, overseas_proxy={len(overseas_rules)}, ai_proxy={len(ai_rules)}, china_direct={len(china_direct_rules)}, lazy_kept={len(lazy_rules)}, host={len(host_lines)}, dropped_lazy={format_counts(dropped_lazy)}, dropped_overseas={format_counts(dropped_overseas)}, dropped_ai={format_counts(dropped_ai)}",
         "",
         "[General]",
         "bypass-system = true",
@@ -369,7 +385,7 @@ def build_config(source_text: str, seeds_path: Path, ai_seeds_path: Path, source
         "dns-direct-system = false",
         "dns-fallback-system = false",
         "dns-direct-fallback-proxy = true",
-        "hijack-dns = 8.8.8.8:53, 8.8.4.4:53, 1.1.1.1:53, 1.0.0.1:53, 9.9.9.9:53, 149.112.112.112:53, 208.67.222.222:53, 208.67.220.220:53, 114.114.114.114:53, 223.5.5.5:53, 223.6.6.6:53, 119.29.29.29:53",
+        "hijack-dns = 8.8.8.8:53, 8.8.4.4:53, 1.1.1.1:53, 1.0.0.1:53, 9.9.9.9:53, 149.112.112.112:53, 208.67.222.222:53, 208.67.220.220:53",
         "private-ip-answer = true",
         "udp-policy-not-supported-behaviour = REJECT",
         "use-local-host-item-for-proxy = false",
@@ -385,6 +401,7 @@ def build_config(source_text: str, seeds_path: Path, ai_seeds_path: Path, source
         "",
         "# Account/media guard: keep overseas accounts on PROXY before lazy rules.",
         *account_rules,
+        *overseas_rules,
         "",
         "# AI guard: generated from references/ai-proxy-domain-seeds.txt. Candidates are not included.",
         *ai_rules,
@@ -408,12 +425,19 @@ def main() -> int:
     parser.add_argument("--source-file", type=Path, help="Use a local fixture instead of the remote upstream.")
     parser.add_argument("--seeds-file", type=Path, default=DEFAULT_SEEDS_PATH)
     parser.add_argument("--ai-seeds-file", type=Path, default=DEFAULT_AI_SEEDS_PATH)
+    parser.add_argument("--overseas-proxy-seeds-file", type=Path, default=DEFAULT_OVERSEAS_PROXY_SEEDS_PATH)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
     parser.add_argument("--check", action="store_true", help="Check that output is already up to date.")
     args = parser.parse_args()
 
     source_text = read_source(args.source_url, args.source_file)
-    output = build_config(source_text, args.seeds_file, args.ai_seeds_file, args.source_url)
+    output = build_config(
+        source_text,
+        args.seeds_file,
+        args.ai_seeds_file,
+        args.overseas_proxy_seeds_file,
+        args.source_url,
+    )
 
     if args.check:
         if not args.output.exists():

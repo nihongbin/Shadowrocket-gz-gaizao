@@ -210,6 +210,17 @@
 - 验证确认：PR #2 只修改 `docs/rule-source-decisions.md`，不包含私有配置、节点、订阅、账号、代理组，也不包含临时报告文件。
 - 验证确认：`main`、`origin/main` 和远端 `main` 均保持在同一个提交，Actions 没有直接改写主分支。
 
+## 2026-07-01 S1.1 第二轮日志修正
+
+- 本轮只改当前主线 S1.1，不覆盖旧 S1 对照组。
+- 已保留 S1.1 既有修正：`browserleaks.com` 前置 `PROXY`、移除 iab0x00 远程 AI 规则、QuantumultX 路径替换、Google DoH 备用。
+- 修正 `hijack-dns`：删除中国 DNS，只保留海外公共 DNS 明文劫持项，避免把中国 DNS 自己也放进劫持列表。
+- 补充中国 App 日志域名到 `references/china-local-domain-seeds.txt`，由脚本统一生成 `[Host] + DIRECT`。
+- 新增 `references/overseas-proxy-domain-seeds.txt`，把 `crunchyroll.com`、`revenuecat.com`、`bugsnag.com`、`branch.io`、`ipapi.co`、`appsflyersdk.com` 等海外 SDK/服务域名显式放入 Account/media guard，且排在中国 `DIRECT` 前。
+- 不把 `insta360.com` 全域直连，只把更窄的 `snssdk.insta360.com` 作为中国 App 日志域名处理。
+- `itdog.cn`、`ip.cn`、`qualcomm.cn`、`qianwen.com` 暂不进入默认配置，记录到 `references/s1-1-logfix-candidates.md` 等下一轮日志确认。
+- 已生成本地私有测试文件：`local/private-configs/S1-1-default-lazy-stabilized-logfix.conf`。该文件含私有节点/代理组，只能本机测试，不进仓库、不公开。
+
 ## 2026-07-01 S2 严格中国 App 白名单方向
 
 - 方向修正：手机 App 是第一保障场景，浏览器测试站只是体检工具；但测试站直连暴露出“未知或误判域名可能被 DIRECT”的底层风险。

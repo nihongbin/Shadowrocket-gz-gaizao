@@ -1,5 +1,5 @@
-# China local domain seeds for S0/S1/S2 [Host] generation.
-# One root domain per line. The generator writes both root and wildcard Host entries.
+# China local domain seeds for S0/S1/S1.1/S2 [Host] generation.
+# One root domain or confirmed China-local hostname per line. The generator writes both root/exact and wildcard Host entries.
 # Keep this list focused on China-local app experience. Do not add overseas account domains.
 
 # Tencent / WeChat / QQ
@@ -71,16 +71,26 @@ ixigua.com
 bytedance.com
 byteimg.com
 bytecdn.com
+byteeffecttos.com
 bytegecko.com
 bytehwm.com
+bytemaimg.com
+bytemastatic.com
 bytednsdoc.com
+bytescm.com
 bdurl.net
 douyincdn.com
 ecombdapi.com
 ecombdimg.com
 ecombdpage.com
+fqnovelpic.com
 zijieapi.com
 doubao.com
+dailygn.com
+pangolin-sdk-toutiao1.com
+qishui.com
+qznovelvod.com
+snssdk.insta360.com
 
 # Xiaohongshu
 xiaohongshu.com
@@ -114,6 +124,11 @@ itc.cn
 
 # Push / China app infrastructure
 getui.com
+yunxindns.com
+yunxinfw.com
+
+# China ad / measurement infrastructure observed in China app logs
+miaozhen.com
 
 # China video platforms
 iqiyi.com

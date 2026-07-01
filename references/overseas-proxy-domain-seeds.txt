@@ -1,0 +1,17 @@
+# Overseas proxy domain seeds for S1.1 account/media guard.
+# Format: DOMAIN,example.com / DOMAIN-SUFFIX,example.com / DOMAIN-KEYWORD,keyword
+# The S1.1 generator appends PROXY. Keep this list focused on overseas services observed in logs.
+
+DOMAIN-SUFFIX,crunchyroll.com
+DOMAIN-SUFFIX,snapkit.com
+DOMAIN-SUFFIX,revenuecat.com
+DOMAIN-SUFFIX,bugsnag.com
+DOMAIN-SUFFIX,branch.io
+DOMAIN-SUFFIX,singular.net
+DOMAIN-SUFFIX,sprig.com
+DOMAIN-SUFFIX,instabug.com
+DOMAIN-SUFFIX,gorgias.chat
+DOMAIN-SUFFIX,gorgias.help
+DOMAIN-SUFFIX,ip.net.coffee
+DOMAIN-SUFFIX,ipapi.co
+DOMAIN-SUFFIX,appsflyersdk.com

@@ -21,6 +21,8 @@
   - `china-local-domain-seeds.txt`：S0/S1/S1.1/S2 `[Host]` 生成使用的中国本地域名种子表。
   - `ai-proxy-domain-seeds.txt`：S1.1 AI 正式代理清单。
   - `ai-proxy-domain-candidates.txt`：S1.1 AI 候选清单，不自动进入配置。
+  - `overseas-proxy-domain-seeds.txt`：S1.1 海外显式代理清单，进入 Account/media guard，必须排在中国 `DIRECT` 之前。
+  - `s1-1-logfix-candidates.md`：S1.1 日志修正候选域名记录，默认不进入配置。
   - `rule-source-registry.md` / `rule-source-registry.json`：S1.1 外部规则源注册表。
 - `scripts/`：本地生成和静态检查脚本，脚本不得把节点、订阅、账号或密钥写入仓库。
 - `.github/workflows/`：S1.1 已确认启用，用于上游监控、Issue 通知、确认后 PR 和 GitHub Pages 公开模板发布。新增非 S1.1 自动化仍需单独确认。
@@ -102,6 +104,10 @@ WebRTC/STUN 不作为 v1 配置实现范围。不得默认加入 `stun-response-
 - `configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf` 是公开规则模板，不含节点、订阅、账号、代理组；不能单独作为有效实机配置。
 - S1.1 移除 iab0x00 远程 AI `RULE-SET` 运行时依赖，AI 规则只从本项目正式清单生成。
 - S1.1 不允许 `rule/QuantumultX/` 路径；已确认可替换的规则源必须使用 blackmatrix7 Shadowrocket 路径。
+- S1.1 第二轮日志修正只改 S1.1 主线，不覆盖旧 S1 对照组。
+- S1.1 的 `hijack-dns` 不得包含中国 DNS：`114.114.114.114`、`223.5.5.5`、`223.6.6.6`、`119.29.29.29`。
+- S1.1 中国 App 日志域名必须从 `references/china-local-domain-seeds.txt` 生成 `[Host] + DIRECT`；海外 SDK/服务域名必须从 `references/overseas-proxy-domain-seeds.txt` 生成前置 `PROXY`。
+- S1.1 不得把 `insta360.com` 全域默认直连；当前只允许更窄的 `snssdk.insta360.com` 进入中国本地清单。
 - S1.1 每周通过 GitHub Actions 监控上游；无变化不通知，有变化或异常创建/更新 Issue。
 - 人工确认后 Actions 只能创建 PR，不得直接合并主分支。
 - GitHub Pages 只能发布不含节点和代理组的公开模板；`local/private-configs/` 不得进入仓库或公开目录。
