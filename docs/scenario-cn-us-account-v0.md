@@ -100,10 +100,12 @@ python scripts\merge-s0-private-config.py --base "local\private-configs\desktop-
 4. Shadowrocket 首页“全局路由”选择“配置”。
 5. 每次切换配置后，先断开 Shadowrocket，再重新连接。
 
-公开链接启用后：
+公开链接：
 
-- 优先使用 GitHub Pages 公开链接作为 Shadowrocket 订阅地址。
-- 如果 Pages 未启用，再使用 raw GitHub 链接。
+- 优先使用 GitHub Pages 公开链接作为 Shadowrocket 订阅地址：
+  `https://nihongbin.github.io/Shadowrocket-gz-gaizao/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`
+- 如果 Pages 暂时不可用，再使用 raw GitHub 备用链接：
+  `https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`
 - 注意：公开 S0 模板不含节点，公开链接只适合规则模板更新；私有完整配置仍需本地合并。
 - 注意：公开 S1/S1.1 模板同样不含节点；S1.1 还依赖已登记的远程 blackmatrix7 `RULE-SET`，手机端需要能加载这些规则源。
 - 注意：公开 S2 模板同样不含节点；S2 更安全但可能让未收录的中国 App 域名走代理。

@@ -10,9 +10,11 @@
 - PASS - required directory exists: `docs/`
 - PASS - required directory exists: `references/`
 - PASS - required directory exists: `scripts/`
-- PASS - `.git` 已重新初始化为 `main`，用于重新绑定远端仓库。
+- PASS - `.git` 已重新初始化为 `main`，远端 `origin` 已绑定并推送到 `https://github.com/nihongbin/Shadowrocket-gz-gaizao`。
 - PASS - `local/` 已写入 `.gitignore`，`local/private-configs/` 被确认忽略。
 - PASS - S1.1 已新增 GitHub Actions：每周规则源监控、Issue 通知、人工确认后 PR、GitHub Pages 公开模板发布。
+- PASS - GitHub Actions workflow permissions 已配置为 write，允许确认后创建 PR，但不自动合并。
+- PASS - GitHub Pages 已启用为 workflow 发布源，S1.1 公开模板链接已返回 HTTP 200。
 
 ## 文件存在性
 
@@ -120,12 +122,17 @@
 - PASS - current source monitor result is `severity=OK`; unchanged Johnshall `lazy.conf` stays reference-only and does not trigger Issue
 - PASS - local hash-change fixture produces `severity=P2` and `issue_required=True` without modifying upstream remote sources
 - PASS - `.github/workflows/s1-1-source-monitor.yml` includes a manual `simulate_hash_change` input for online Issue-creation testing; scheduled runs do not use this simulation path
+- PASS - online normal monitor run completed successfully and created no Issue when source status was OK
+- PASS - online simulated hash-change run created Issue #1 with severity `P2`
 - PASS - `references/ai-proxy-domain-seeds.txt` enters S1.1 as local AI `PROXY` rules
 - PASS - `references/ai-proxy-domain-candidates.txt` is monitored but does not enter S1.1 automatically
 - PASS - `python scripts\check-ai-domain-health.py` writes `docs/ai-domain-health-report.md` for manual review
 - PASS - `scripts/apply-approved-s1-1-update.py` supports `/approve-s1.1-update`, `/approve-ai-domain example.com`, `/approve-source-update source-id`, `/reject-ai-domain example.com`, and `/reject-source-update source-id`
 - PASS - simulated reject command leaves the generated S1.1 config hash unchanged; local simulation record is not kept in formal decisions
 - PASS - approval workflow writes temporary PR body and static-check output under ignored `local/`, so report artifacts are not included in PR diffs
+- PASS - online reject comment created PR #2 with static-check output in the PR body
+- PASS - PR #2 only changes `docs/rule-source-decisions.md`; temporary report files, configs, nodes, subscriptions, accounts, and proxy groups are not included
+- PASS - `main`, `origin/main`, and remote `main` remained unchanged after the Issue comment workflow; Actions created a PR instead of writing main
 
 ## S2 配置结构
 
@@ -206,4 +213,9 @@
 
 ## 结论
 
-本地静态检查通过。S0 公开规则模板、S1 lazy 规则增强模板、S1.1 规则源治理增强模板、S2 严格中国 App 白名单模板、生成脚本、规则源监控脚本、确认后 PR 脚本、GitHub Actions 和私有合并脚本已准备好；私有测试文件已统一收纳到 `local/private-configs/`，不再放桌面。S1 保留为稳定对照组，S2 保留为严格白名单参考，当前主线是 S1.1。私有完整配置、节点、订阅、账号、代理组不得进入仓库或 GitHub Pages；远端仓库重新创建和推送完成后，公开链接只发布不含节点和代理组的 S1.1 模板。
+本地静态检查和线上闭环检查通过。S0 公开规则模板、S1 lazy 规则增强模板、S1.1 规则源治理增强模板、S2 严格中国 App 白名单模板、生成脚本、规则源监控脚本、确认后 PR 脚本、GitHub Actions 和私有合并脚本已准备好；私有测试文件已统一收纳到 `local/private-configs/`，不再放桌面。S1 保留为稳定对照组，S2 保留为严格白名单参考，当前主线是 S1.1。私有完整配置、节点、订阅、账号、代理组没有进入仓库或 GitHub Pages；公开链接只发布不含节点和代理组的 S1.1 模板。
+
+- GitHub Pages S1.1 模板：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`
+- raw GitHub 备用链接：`https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`
+- 线上模拟通知 Issue：`https://github.com/nihongbin/Shadowrocket-gz-gaizao/issues/1`
+- 线上模拟确认 PR：`https://github.com/nihongbin/Shadowrocket-gz-gaizao/pull/2`

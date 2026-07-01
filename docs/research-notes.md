@@ -110,7 +110,7 @@
 - 海外账号覆盖规则必须放在 Johnshall 主体规则之前，防止 TikTok、Instagram、YouTube、X、Facebook、Google、OpenAI、Claude 等账号侧域名被误直连。
 - 博主 `a-nomad.conf` 不作为 S0 底座，只借鉴“规则优先级”和 `FINAL,PROXY` 兜底思路。
 - 自动更新不写当前运行时间，只写上游 URL、上游 SHA256、规则数量和许可证说明，避免上游无变化时产生无意义差异。
-- GitHub Actions、公开链接、自动写仓库仍属于红线动作；本轮只在文档中写待启用方案，不新增 workflow 文件。
+- 当时 GitHub Actions、公开链接、自动写仓库仍属于红线动作；S0 只在文档中写待启用方案，未新增 workflow 文件。该边界后来在 S1.1 阶段由老倪单独确认解除。
 - S0 公开模板不含节点和代理组。由于 Shadowrocket 只能选一个配置文件，手机实测必须生成本地私有合并版：保留原始完整配置中的节点/代理组，用 S0 覆盖 `[General]`、`[Host]`、`[Rule]`。
 - 私有合并版不得进入仓库、不得记录节点内容、不得公开分享。
 
@@ -198,6 +198,17 @@
 - GitHub Actions 监控口径：每周检查规则源，无变化不通知；出现不可访问、空规则、高风险格式、hash 变化或可评估新规则机会时，创建或更新 GitHub Issue。
 - 人工确认闭环：老倪在 Issue 里使用固定指令确认或拒绝；确认后 Actions 创建 PR 并附带静态检查结果；PR 仍由老倪手动合并，Actions 不直接写主分支正式配置。
 - 私有完整配置固定输出到 `local/private-configs/`，该目录已被 `.gitignore` 忽略；桌面测试文件已迁移进项目内本地私有目录，不进入仓库、不公开、不上传 GitHub Pages。
+
+## 2026-07-01 S1.1 线上闭环验证
+
+- 远端仓库已重新创建并推送：`https://github.com/nihongbin/Shadowrocket-gz-gaizao`。
+- GitHub Pages 已启用为 Actions 发布源，公开 S1.1 模板链接已返回 HTTP 200：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`。
+- raw GitHub 备用链接：`https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`。
+- 正常手动运行 `S1.1 Rule Source Monitor` 时，当前规则源结果为 `severity=OK`，没有创建 Issue，符合“无变化不通知”。
+- 使用 `simulate_hash_change=true` 手动模拟 hash 变化后，workflow 创建 Issue #1：`[S1.1规则源监控] P2 - 上游规则源出现需确认变化`。
+- 在 Issue #1 评论 `/reject-source-update blackmatrix7-amazon` 后，workflow 创建 PR #2，PR 正文包含静态检查结果，并明确需要人工 review/merge。
+- 验证确认：PR #2 只修改 `docs/rule-source-decisions.md`，不包含私有配置、节点、订阅、账号、代理组，也不包含临时报告文件。
+- 验证确认：`main`、`origin/main` 和远端 `main` 均保持在同一个提交，Actions 没有直接改写主分支。
 
 ## 2026-07-01 S2 严格中国 App 白名单方向
 

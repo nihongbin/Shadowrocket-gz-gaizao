@@ -86,7 +86,7 @@ WebRTC/STUN 不作为 v1 配置实现范围。不得默认加入 `stun-response-
 - `configs/S0-scenario-cn-us-account-aggressive-v0.conf` 是公开规则模板，不含节点和代理组；在 Shadowrocket 只能选一个配置文件的场景下，不能单独作为有效实机配置。
 - 手机实测必须先用 `scripts/merge-s0-private-config.py` 将用户本地原始完整配置与 S0 模板合并，生成不进仓库的私有完整配置。
 - 私有完整配置默认输出到 `local/private-configs/`；该目录在项目内但被忽略，不能复制到 `configs/`、`docs/`、`references/` 或公开链接目录。
-- 公开链接、GitHub Actions、自动写仓库属于红线动作，必须单独确认。
+- 本轮 S1.1 的公开链接、GitHub Actions、自动 Issue、确认后 PR 和远端推送已由老倪确认；新增非 S1.1 自动化或公开发布仍需单独确认。
 
 ## S1 范围
 
