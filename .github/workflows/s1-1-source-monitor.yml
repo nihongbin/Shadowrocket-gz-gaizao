@@ -1,0 +1,92 @@
+name: S1.1 Rule Source Monitor
+
+on:
+  schedule:
+    - cron: "17 2 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build and validate S1.1
+        run: |
+          python scripts/build-s1-1-stabilized.py --check
+          python scripts/check-s1-1-static.py
+
+      - name: Check rule sources
+        run: |
+          mkdir -p local
+          python scripts/check-rule-sources.py --json-output local/rule-source-monitor-result.json
+
+      - name: Create or update monitor issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const result = JSON.parse(fs.readFileSync('local/rule-source-monitor-result.json', 'utf8'));
+            if (!result.issue_required) {
+              core.info('No S1.1 source changes or abnormalities; no issue will be created.');
+              return;
+            }
+
+            const severity = result.severity || 'P3';
+            const title = `[S1.1规则源监控] ${severity} - 上游规则源出现需确认变化`;
+            const rows = result.results
+              .filter((item) => item.status !== 'OK')
+              .map((item) => `| \`${item.id}\` | \`${item.status}\` | ${item.summary} | ${item.url} |`)
+              .join('\n');
+            const body = [
+              '## Summary',
+              '',
+              `本次检测发现 S1.1 规则源需要人工确认，最高等级为 \`${severity}\`。脚本不会自动修改正式配置。`,
+              '',
+              '## Source Status',
+              '',
+              '| Source | Status | Finding | URL |',
+              '|---|---|---|---|',
+              rows || '| n/a | OK | No abnormal sources | n/a |',
+              '',
+              '## Suggested Action',
+              '',
+              '请确认是否吸收本次变化；确认后只会创建 PR，不会直接合并主分支。',
+              '',
+              '## Approval Commands',
+              '',
+              '- `/approve-s1.1-update`',
+              '- `/approve-source-update source-id`',
+              '- `/approve-ai-domain example.com`',
+              '- `/reject-source-update source-id`',
+              '- `/reject-ai-domain example.com`',
+              '',
+            ].join('\n');
+
+            const {owner, repo} = context.repo;
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existing = openIssues.find((issue) =>
+              issue.title.startsWith('[S1.1规则源监控]') && !issue.pull_request
+            );
+            if (existing) {
+              await github.rest.issues.update({owner, repo, issue_number: existing.number, title, body});
+              core.info(`Updated issue #${existing.number}`);
+            } else {
+              const created = await github.rest.issues.create({owner, repo, title, body});
+              core.info(`Created issue #${created.data.number}`);
+            }

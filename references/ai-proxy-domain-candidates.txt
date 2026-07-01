@@ -1,0 +1,19 @@
+# S1.1 AI proxy domain candidates.
+# Candidates are monitored but do not enter S1.1 until manually approved.
+
+# From iab0x00 AI aggregate source; kept here for manual review only.
+DOMAIN-SUFFIX,chat.com
+DOMAIN-KEYWORD,openaiapi
+DOMAIN-KEYWORD,openaicom
+DOMAIN-SUFFIX,smoot.apple.com
+DOMAIN,apple-relay.apple.com
+DOMAIN,apple-relay.cloudflare.com
+DOMAIN,apple-relay.fastly-edge.com
+DOMAIN,cp4.cloudflare.com
+DOMAIN,gspe1-ssl.ls.apple.com
+DOMAIN,guzzoni.apple.com
+DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com
+DOMAIN-SUFFIX,geller-pa.googleapis.com
+DOMAIN,antigravity.google
+DOMAIN,antigravity-unleash.goog
+DOMAIN-KEYWORD,labs.google

@@ -1,0 +1,146 @@
+# China local domain seeds for S0/S1/S2 [Host] generation.
+# One root domain per line. The generator writes both root and wildcard Host entries.
+# Keep this list focused on China-local app experience. Do not add overseas account domains.
+
+# Tencent / WeChat / QQ
+qq.com
+qpic.cn
+gtimg.com
+wechat.com
+tencent.com
+qcloud.com
+myqcloud.com
+
+# Alibaba / Taobao / Alipay / Youku
+taobao.com
+tmall.com
+alipay.com
+alicdn.com
+aliyun.com
+alibaba.com
+alibabausercontent.com
+alimama.com
+mmstat.com
+ele.me
+koubei.com
+youku.com
+tudou.com
+cainiao.com
+
+# JD / Pinduoduo
+jd.com
+jdcdn.com
+jdpay.com
+360buyimg.com
+pinduoduo.com
+pddpic.com
+yangkeduo.com
+
+# Meituan / Dianping
+meituan.com
+meituan.net
+meituanimg.com
+dianping.com
+
+# Baidu / Amap
+baidu.com
+bdimg.com
+bdstatic.com
+baidubce.com
+amap.com
+autonav.com
+gaode.com
+
+# Bilibili
+bilibili.com
+hdslb.com
+bilivideo.com
+biliimg.com
+biliapi.com
+biliapi.net
+
+# ByteDance China apps
+# S2 excludes broad cross-border domains by script: bytedance.com, byteimg.com, snssdk.com.
+douyin.com
+douyinpic.com
+douyinvod.com
+amemv.com
+toutiao.com
+snssdk.com
+ixigua.com
+bytedance.com
+byteimg.com
+bytecdn.com
+bytegecko.com
+bytehwm.com
+bytednsdoc.com
+bdurl.net
+douyincdn.com
+ecombdapi.com
+ecombdimg.com
+ecombdpage.com
+zijieapi.com
+doubao.com
+
+# Xiaohongshu
+xiaohongshu.com
+xiaohongshu.net
+xhscdn.com
+
+# Kuaishou
+kuaishou.com
+gifshow.com
+ksapisrv.com
+kwaicdn.com
+kwimgs.com
+yximgs.com
+
+# Weibo / Sina
+weibo.com
+sina.com.cn
+sinaimg.cn
+sinajs.cn
+
+# NetEase / Sohu
+163.com
+126.com
+126.net
+netease.com
+163yun.com
+127.net
+sohu.com
+sohu-inc.com
+itc.cn
+
+# Push / China app infrastructure
+getui.com
+
+# China video platforms
+iqiyi.com
+qiyi.com
+iqiyipic.com
+mgtv.com
+hunantv.com
+
+# China payments / travel / device ecosystems
+unionpay.com
+95516.com
+didi.cn
+xiaojukeji.com
+ctrip.com
+qunar.com
+mi.com
+miui.com
+xiaomi.com
+huawei.com
+oppo.com
+vivo.com
+
+# Apple basic services commonly needed on iPhone in China
+apple.com
+icloud.com
+icloud-content.com
+mzstatic.com
+cdn-apple.com
+apple-dns.net
+aaplimg.com

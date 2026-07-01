@@ -1,0 +1,56 @@
+# S1.1 AI proxy domain seeds.
+# Format: DOMAIN,example.com / DOMAIN-SUFFIX,example.com / DOMAIN-KEYWORD,keyword
+# The S1.1 generator appends PROXY. Keep this list confirmed and conservative.
+
+# OpenAI / ChatGPT / Sora
+DOMAIN-SUFFIX,openai.com
+DOMAIN-SUFFIX,chatgpt.com
+DOMAIN-SUFFIX,oaistatic.com
+DOMAIN-SUFFIX,oaiusercontent.com
+DOMAIN-SUFFIX,sora.com
+DOMAIN-SUFFIX,ai.com
+DOMAIN-SUFFIX,auth0.com
+DOMAIN-SUFFIX,arkoselabs.com
+DOMAIN-SUFFIX,intercom.io
+DOMAIN-SUFFIX,intercomcdn.com
+DOMAIN-SUFFIX,launchdarkly.com
+DOMAIN-SUFFIX,statsigapi.net
+DOMAIN-SUFFIX,featuregates.org
+DOMAIN-SUFFIX,livekit.cloud
+DOMAIN-SUFFIX,segment.io
+DOMAIN-SUFFIX,sentry.io
+DOMAIN-SUFFIX,stripe.com
+
+# Claude / Anthropic
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
+
+# Gemini / Google AI
+DOMAIN-SUFFIX,gemini.google.com
+DOMAIN-SUFFIX,generativeai.google
+DOMAIN-SUFFIX,generativelanguage.googleapis.com
+DOMAIN-SUFFIX,deepmind.com
+DOMAIN-SUFFIX,deepmind.google
+DOMAIN,ai.google.dev
+DOMAIN,aistudio.google.com
+DOMAIN,makersuite.google.com
+DOMAIN-KEYWORD,notebooklm.google
+
+# Microsoft Copilot / GitHub Copilot
+DOMAIN,copilot.microsoft.com
+DOMAIN,sydney.bing.com
+DOMAIN-SUFFIX,githubcopilot.com
+DOMAIN-SUFFIX,bingapis.com
+DOMAIN-SUFFIX,edgeservices.bing.com
+
+# Perplexity
+DOMAIN-SUFFIX,perplexity.ai
+DOMAIN-SUFFIX,pplx.ai
+DOMAIN,pplx-res.cloudinary.com
+
+# Grok / xAI
+DOMAIN-SUFFIX,grok.com
+DOMAIN-SUFFIX,x.ai
+
+# OpenRouter
+DOMAIN-SUFFIX,openrouter.ai

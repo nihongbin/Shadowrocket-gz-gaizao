@@ -1,0 +1,86 @@
+name: S1.1 Apply Approved Update
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "Approval command to apply"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  apply:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.comment.body, '/approve-s1.1-update') ||
+      contains(github.event.comment.body, '/approve-ai-domain') ||
+      contains(github.event.comment.body, '/approve-source-update') ||
+      contains(github.event.comment.body, '/reject-ai-domain') ||
+      contains(github.event.comment.body, '/reject-source-update')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply approved command
+        env:
+          COMMENT_BODY: ${{ github.event_name == 'workflow_dispatch' && inputs.command || github.event.comment.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || 'manual' }}
+          COMMENT_AUTHOR: ${{ github.event.comment.user.login || github.actor }}
+        run: |
+          python scripts/apply-approved-s1-1-update.py
+
+      - name: Run S1.1 static checks
+        id: static_check
+        shell: bash
+        run: |
+          set -o pipefail
+          python scripts/build-s1-1-stabilized.py --check
+          python scripts/check-s1-1-static.py | tee local-static-check.txt
+          {
+            echo "## Summary"
+            echo "Applies manually approved S1.1 rule-source or AI-domain changes from an Issue command."
+            echo
+            echo "## Static Check"
+            echo
+            echo '```text'
+            cat local-static-check.txt
+            echo '```'
+            echo
+            echo "## Safety"
+            echo "This PR must be reviewed and manually merged. It does not include private configs, nodes, subscriptions, accounts, or proxy groups."
+          } > local-pr-body.md
+
+      - name: Create pull request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: automation/s1-1-approved-update
+          delete-branch: true
+          title: "S1.1: apply approved rule source updates"
+          commit-message: "S1.1: apply approved rule source updates"
+          body-path: local-pr-body.md
+
+      - name: Comment with PR result
+        if: github.event_name == 'issue_comment' && steps.cpr.outputs.pull-request-url != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `已根据确认指令创建 PR：${{ steps.cpr.outputs.pull-request-url }}`
+            });
