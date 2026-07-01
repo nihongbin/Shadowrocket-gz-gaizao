@@ -119,6 +119,7 @@
 - PASS - repeated generation hash is stable when inputs do not change
 - PASS - `references/rule-source-registry.json` covers all remote URLs used or monitored by S1.1
 - PASS - `python scripts\check-rule-sources.py` writes `docs/rule-source-health-report.md` and `docs/lazy-upstream-diff-report.md`
+- PASS - rule-source health reports omit runtime timestamps to avoid no-op diffs
 - PASS - current source monitor result is `severity=OK`; unchanged Johnshall `lazy.conf` stays reference-only and does not trigger Issue
 - PASS - local hash-change fixture produces `severity=P2` and `issue_required=True` without modifying upstream remote sources
 - PASS - `.github/workflows/s1-1-source-monitor.yml` includes a manual `simulate_hash_change` input for online Issue-creation testing; scheduled runs do not use this simulation path
@@ -127,6 +128,7 @@
 - PASS - `references/ai-proxy-domain-seeds.txt` enters S1.1 as local AI `PROXY` rules
 - PASS - `references/ai-proxy-domain-candidates.txt` is monitored but does not enter S1.1 automatically
 - PASS - `python scripts\check-ai-domain-health.py` writes `docs/ai-domain-health-report.md` for manual review
+- PASS - AI domain health report omits runtime timestamps to avoid no-op diffs
 - PASS - `scripts/apply-approved-s1-1-update.py` supports `/approve-s1.1-update`, `/approve-ai-domain example.com`, `/approve-source-update source-id`, `/reject-ai-domain example.com`, and `/reject-source-update source-id`
 - PASS - simulated reject command leaves the generated S1.1 config hash unchanged; local simulation record is not kept in formal decisions
 - PASS - approval workflow writes temporary PR body and static-check output under ignored `local/`, so report artifacts are not included in PR diffs

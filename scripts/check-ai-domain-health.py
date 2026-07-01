@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import http.client
 import socket
 import ssl
@@ -75,11 +74,10 @@ def check_domain(domain: str) -> tuple[str, str]:
 
 
 def render_report(rows: list[dict[str, str]]) -> str:
-    now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     lines = [
         "# S1.1 AI Domain Health Report",
         "",
-        f"Generated: {now}",
+        "Generated: omitted to avoid runtime timestamp churn.",
         "",
         "This report is advisory. It does not automatically add, remove, or promote domains.",
         "",

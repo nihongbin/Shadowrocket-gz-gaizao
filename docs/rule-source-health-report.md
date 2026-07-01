@@ -1,6 +1,6 @@
 # S1.1 Rule Source Health Report
 
-Generated: 2026-07-01 08:56:29 UTC
+Generated: omitted to avoid runtime timestamp churn.
 Overall severity: `OK`
 
 | Source ID | Status | HTTP | Finding | URL |

@@ -1,13 +1,13 @@
 # S1.1 AI Domain Health Report
 
-Generated: 2026-07-01 08:55:42 UTC
+Generated: omitted to avoid runtime timestamp churn.
 
 This report is advisory. It does not automatically add, remove, or promote domains.
 
 | List | Rule | Status | Detail |
 |---|---|---|---|
 | seeds | `DOMAIN-SUFFIX,openai.com` | `OK` | HTTPS reachable, status 403 |
-| seeds | `DOMAIN-SUFFIX,chatgpt.com` | `FAIL` | TLS failed: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010) |
+| seeds | `DOMAIN-SUFFIX,chatgpt.com` | `OK` | HTTPS reachable, status 403 |
 | seeds | `DOMAIN-SUFFIX,oaistatic.com` | `OK` | HTTPS reachable, status 404 |
 | seeds | `DOMAIN-SUFFIX,oaiusercontent.com` | `FAIL` | TLS failed: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010) |
 | seeds | `DOMAIN-SUFFIX,sora.com` | `OK` | HTTPS reachable, status 403 |
@@ -32,14 +32,14 @@ This report is advisory. It does not automatically add, remove, or promote domai
 | seeds | `DOMAIN-SUFFIX,deepmind.google` | `OK` | HTTPS reachable, status 200 |
 | seeds | `DOMAIN,ai.google.dev` | `OK` | HTTPS reachable, status 200 |
 | seeds | `DOMAIN,aistudio.google.com` | `OK` | HTTPS reachable, status 302 |
-| seeds | `DOMAIN,makersuite.google.com` | `FAIL` | TLS failed: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010) |
+| seeds | `DOMAIN,makersuite.google.com` | `OK` | HTTPS reachable, status 302 |
 | seeds | `DOMAIN-KEYWORD,notebooklm.google` | `NOT_CHECKABLE` | Keyword or unsupported rule type is syntax-only. |
 | seeds | `DOMAIN,copilot.microsoft.com` | `OK` | HTTPS reachable, status 200 |
 | seeds | `DOMAIN,sydney.bing.com` | `OK` | HTTPS reachable, status 400 |
 | seeds | `DOMAIN-SUFFIX,githubcopilot.com` | `FAIL` | TLS failed: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'githubcopilot.com'. (_ssl.c:1010) |
 | seeds | `DOMAIN-SUFFIX,bingapis.com` | `FAIL` | TLS failed: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010) |
 | seeds | `DOMAIN-SUFFIX,edgeservices.bing.com` | `OK` | HTTPS reachable, status 200 |
-| seeds | `DOMAIN-SUFFIX,perplexity.ai` | `OK` | HTTPS reachable, status 301 |
+| seeds | `DOMAIN-SUFFIX,perplexity.ai` | `WARN` | HTTPS HEAD inconclusive: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010) |
 | seeds | `DOMAIN-SUFFIX,pplx.ai` | `OK` | HTTPS reachable, status 301 |
 | seeds | `DOMAIN,pplx-res.cloudinary.com` | `OK` | HTTPS reachable, status 301 |
 | seeds | `DOMAIN-SUFFIX,grok.com` | `OK` | HTTPS reachable, status 200 |

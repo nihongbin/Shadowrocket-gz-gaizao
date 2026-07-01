@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import hashlib
 import json
 import re
@@ -156,11 +155,10 @@ def aggregate_severity(results: list[dict[str, object]]) -> str:
 
 
 def render_health_report(results: list[dict[str, object]], severity: str) -> str:
-    now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     lines = [
         "# S1.1 Rule Source Health Report",
         "",
-        f"Generated: {now}",
+        "Generated: omitted to avoid runtime timestamp churn.",
         f"Overall severity: `{severity}`",
         "",
         "| Source ID | Status | HTTP | Finding | URL |",
