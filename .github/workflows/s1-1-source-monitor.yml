@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "17 2 * * 1"
   workflow_dispatch:
+    inputs:
+      simulate_hash_change:
+        description: "Temporarily alter the first source hash to test Issue creation"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -25,6 +31,21 @@ jobs:
         run: |
           python scripts/build-s1-1-stabilized.py --check
           python scripts/check-s1-1-static.py
+
+      - name: Simulate source hash change
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.simulate_hash_change == true }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("references/rule-source-registry.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          data["sources"][0]["expected_sha256"] = "0" * 64
+          path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          print(f"simulated hash change for {data['sources'][0]['id']}")
+          PY
 
       - name: Check rule sources
         run: |
