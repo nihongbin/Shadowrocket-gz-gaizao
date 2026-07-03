@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Merge private Shadowrocket proxy sections with a public scenario template.
 
-The public S0/S1 configs intentionally have no proxy nodes. This script builds a
+The public S0/S1/S5 configs intentionally have no proxy nodes. This script builds a
 private full config by keeping proxy-related sections from a user's original
 complete config and replacing only [General], [Host], and [Rule] with the
 selected scenario template.
@@ -18,6 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_S0_PATH = ROOT / "configs" / "S0-scenario-cn-us-account-aggressive-v0.conf"
+DEFAULT_S5_PATH = ROOT / "configs" / "S5-scenario-cn-us-v5-mvp-v0.conf"
 LOCAL_PRIVATE_OUTPUT_ROOT = ROOT / "local" / "private-configs"
 REPLACE_SECTIONS = ("General", "Host", "Rule")
 PRESERVE_BASE_SECTIONS = ("Proxy", "Proxy Group")
@@ -191,6 +192,11 @@ def main() -> int:
         type=Path,
         help="Backward-compatible alias for --template.",
     )
+    parser.add_argument(
+        "--v5-mvp",
+        action="store_true",
+        help="Use the public S5 V5 MVP template.",
+    )
     parser.add_argument("--output", type=Path, help="Private merged output path outside this repo.")
     parser.add_argument("--dry-run", action="store_true", help="Validate inputs and print section summary only.")
     parser.add_argument(
@@ -226,7 +232,11 @@ def main() -> int:
         return 2
 
     base_path = args.base.resolve()
-    template_path = (args.template or args.s0 or DEFAULT_S0_PATH).resolve()
+    if args.v5_mvp and (args.template or args.s0):
+        print("choose either --v5-mvp or --template/--s0, not both", file=sys.stderr)
+        return 2
+
+    template_path = (DEFAULT_S5_PATH if args.v5_mvp else (args.template or args.s0 or DEFAULT_S0_PATH)).resolve()
     base_text = read_text(base_path)
     template_text = read_text(template_path)
     merged = merge_configs(

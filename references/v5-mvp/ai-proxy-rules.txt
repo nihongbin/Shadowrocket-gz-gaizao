@@ -1,0 +1,33 @@
+# AI and AI-adjacent service guard rules.
+# Keep these before China DIRECT.
+DOMAIN-SUFFIX,sora.com,PROXY
+DOMAIN-SUFFIX,ai.com,PROXY
+DOMAIN-SUFFIX,auth0.com,PROXY
+DOMAIN-SUFFIX,arkoselabs.com,PROXY
+DOMAIN-SUFFIX,intercom.io,PROXY
+DOMAIN-SUFFIX,intercomcdn.com,PROXY
+DOMAIN-SUFFIX,launchdarkly.com,PROXY
+DOMAIN-SUFFIX,statsigapi.net,PROXY
+DOMAIN-SUFFIX,featuregates.org,PROXY
+DOMAIN-SUFFIX,livekit.cloud,PROXY
+DOMAIN-SUFFIX,segment.io,PROXY
+DOMAIN-SUFFIX,sentry.io,PROXY
+DOMAIN-SUFFIX,stripe.com,PROXY
+DOMAIN-SUFFIX,generativeai.google,PROXY
+DOMAIN-SUFFIX,generativelanguage.googleapis.com,PROXY
+DOMAIN-SUFFIX,deepmind.com,PROXY
+DOMAIN-SUFFIX,deepmind.google,PROXY
+DOMAIN,ai.google.dev,PROXY
+DOMAIN,aistudio.google.com,PROXY
+DOMAIN,makersuite.google.com,PROXY
+DOMAIN-KEYWORD,notebooklm.google,PROXY
+DOMAIN,copilot.microsoft.com,PROXY
+DOMAIN,sydney.bing.com,PROXY
+DOMAIN-SUFFIX,githubcopilot.com,PROXY
+DOMAIN-SUFFIX,bingapis.com,PROXY
+DOMAIN-SUFFIX,edgeservices.bing.com,PROXY
+DOMAIN-SUFFIX,pplx.ai,PROXY
+DOMAIN,pplx-res.cloudinary.com,PROXY
+DOMAIN-SUFFIX,grok.com,PROXY
+DOMAIN-SUFFIX,x.ai,PROXY
+DOMAIN-SUFFIX,openrouter.ai,PROXY

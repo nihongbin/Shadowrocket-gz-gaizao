@@ -2,6 +2,8 @@
 
 生成时间：2026-07-01
 
+最后更新：2026-07-03，追加 S5 V5 MVP 本地静态检查结果。
+
 本报告只证明本地材料、自动化脚本和公开模板的静态状态，不证明 Shadowrocket 实机有效性。A/B/C/D 保留为 DNS 泄露诊断记录；S0/S1/S1.1/S2 是中美双市场场景验证模板，不是 final、stable 或 release。
 
 ## 仓库状态
@@ -172,6 +174,40 @@
 - PASS - local fixture changed-upstream test changes output without touching Johnshall remote
 - PASS - local fixture confirms lazy `DIRECT`, `GEOIP,CN,DIRECT`, and `FINAL` are dropped while lazy `PROXY` is kept
 - PASS - generated file header uses stable metadata: upstream URL, upstream SHA256, rule counts, license note; no current runtime timestamp
+
+## S5 V5 MVP 配置结构
+
+- PASS - V5 基盘 hash 已确认：`D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD`
+- PASS - S5 公开模板存在：`configs/S5-scenario-cn-us-v5-mvp-v0.conf`
+- PASS - S5 清单目录存在：`references/v5-mvp/`
+- PASS - S5 包含 `[General]`、`[Rule]`、`[Host]`
+- PASS - S5 不包含 `[Proxy]`、`[Proxy Group]`、`[MITM]`、`[URL Rewrite]`
+- PASS - S5 不包含节点 URI：`ss://`、`ssr://`、`vmess://`、`vless://`、`trojan://`、`hysteria://`
+- PASS - S5 不包含明显 token/password/secret/subscribe 字段
+- PASS - S5 保留 V5 `dns-server` 与 `fallback-dns-server` 的 Cloudflare `#proxy` DoH，不包含 DNS B 的 Google fallback
+- PASS - S5 保留 `block-quic = all-proxy`，不包含 QUIC allow
+- PASS - S5 保持测试站 `PROXY` 在中国 `DIRECT` 前
+- PASS - S5 保持海外/AI/流媒体 `PROXY` 在中国 `DIRECT` 前
+- PASS - S5 保持中国 App `DIRECT` 在远程 `RULE-SET` 和 `FINAL,PROXY` 前
+- PASS - S5 `[Rule]` 段内最后有效规则是 `FINAL,PROXY`
+- PASS - S5 与 V5 的有效 `[General]`、`[Rule]`、`[Host]` 内容一致：`General=15`、`Rule=351`、`Host=381`
+
+## S5 V5 MVP 生成检查
+
+- PASS - `python scripts\build-v5-mvp-template.py --sync-manifests`
+- PASS - `python scripts\build-v5-mvp-template.py --check`
+- PASS - S5 输出 hash 稳定：`B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`
+- PASS - `references/v5-mvp/china-direct-domains.txt` 与 `references/v5-mvp/china-host-dns.csv` 一一对应：`china_direct=190`、`host_dns=190`
+- PASS - S5 清单覆盖：`test_proxy=14`、`overseas_proxy=78`、`ai_proxy=31`、`remote_rulesets=33`、`lazy_body=36`
+- PASS - 公开模板文件头只写稳定元数据和计数，不写当前运行时间
+- PASS - `scripts/merge-s0-private-config.py --v5-mvp --dry-run` 通过
+- PASS - 私有合并测试输出到 `local/private-configs/S5-v5-mvp-private-merged-check.conf`
+- PASS - 私有合并测试文件包含 `[Proxy]` 和 `[Proxy Group]`，但不包含原始 `[URL Rewrite]` 或 `[MITM]`
+- PASS - 私有合并测试文件 `[Rule]` 段内最后有效规则是 `FINAL,PROXY`
+- PASS - `local/private-configs/` 被 `.gitignore` 忽略，私有合并测试文件没有出现在待提交列表
+- PASS - S5 用户反馈文档存在：`docs/v5-mvp-user-test-feedback.md`
+- PASS - S5 发布 runbook 存在：`docs/v5-mvp-release-runbook.md`
+- PASS - 老倪已确认允许执行发布动作，Pages workflow 已加入 S5 模板发布项
 
 ## 私有合并检查
 

@@ -1,0 +1,15 @@
+# DNS/IP test sites must stay PROXY and before China DIRECT.
+DOMAIN-SUFFIX,browserleaks.com,PROXY
+DOMAIN-SUFFIX,browserleaks.org,PROXY
+DOMAIN-SUFFIX,dnsleaktest.com,PROXY
+DOMAIN-SUFFIX,ipleak.net,PROXY
+DOMAIN-SUFFIX,ippure.com,PROXY
+DOMAIN-SUFFIX,ipinfo.io,PROXY
+DOMAIN-SUFFIX,ip.sb,PROXY
+DOMAIN-SUFFIX,whatismyip.com,PROXY
+DOMAIN-SUFFIX,whatismyipaddress.com,PROXY
+DOMAIN-SUFFIX,ifconfig.me,PROXY
+DOMAIN-SUFFIX,icanhazip.com,PROXY
+DOMAIN-SUFFIX,ipify.org,PROXY
+DOMAIN-SUFFIX,ident.me,PROXY
+DOMAIN-SUFFIX,myip.com,PROXY

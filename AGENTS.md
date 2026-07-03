@@ -4,7 +4,7 @@
 
 本项目第一阶段只做 Shadowrocket 隐私增强版 v1 的验证准备，不发布最终配置。
 
-当前新增 S0/S1/S1.1/S2 中美双市场场景验证方向：A/B/C/D 保留为 DNS 泄露诊断记录，S0 用于验证“中国本地体验优先保速度、海外账号侧和未知流量走美国代理兜底”的最小闭环；S1 在 S0 逻辑上接入 Johnshall `lazy.conf` 的成熟 `[Rule]` 主体；S1.1 在 S1 上做规则源治理、AI 自维护和 GitHub 通知闭环；S2 只允许本项目确认的中国 App 域名直连，海外 App、AI、流媒体、测试站和未知流量统一走代理。
+当前新增 S0/S1/S1.1/S2/S5 中美双市场场景验证方向：A/B/C/D 保留为 DNS 泄露诊断记录，S0 用于验证“中国本地体验优先保速度、海外账号侧和未知流量走美国代理兜底”的最小闭环；S1 在 S0 逻辑上接入 Johnshall `lazy.conf` 的成熟 `[Rule]` 主体；S1.1 在 S1 上做规则源治理、AI 自维护和 GitHub 通知闭环；S2 只允许本项目确认的中国 App 域名直连，海外 App、AI、流媒体、测试站和未知流量统一走代理；S5 把已实测稳定的 V5 私有规则清单化并生成最小 MVP 公开模板。
 
 项目表述统一使用“降低常见 DNS 泄露风险，并提供验证流程”。不要写“彻底解决 DNS 泄露”或类似绝对承诺。
 
@@ -24,6 +24,7 @@
   - `overseas-proxy-domain-seeds.txt`：S1.1 海外显式代理清单，进入 Account/media guard，必须排在中国 `DIRECT` 之前。
   - `s1-1-logfix-candidates.md`：S1.1 日志修正候选域名记录，默认不进入配置。
   - `rule-source-registry.md` / `rule-source-registry.json`：S1.1 外部规则源注册表。
+  - `v5-mvp/`：S5 V5 MVP 清单化来源，包含中国 DIRECT、Host DNS、海外 PROXY、AI/测试站保护、远程 RULE-SET 注册表和候选观察清单。
 - `scripts/`：本地生成和静态检查脚本，脚本不得把节点、订阅、账号或密钥写入仓库。
 - `.github/workflows/`：S1.1 已确认启用，用于上游监控、Issue 通知、确认后 PR 和 GitHub Pages 公开模板发布。新增非 S1.1 自动化仍需单独确认。
 - `local/`：本地私有工作区，必须被 `.gitignore` 忽略，不得提交或公开。
@@ -48,6 +49,7 @@
 - S1 来源：`Johnshall/Shadowrocket-ADBlock-Rules-Forever` 的 `lazy.conf` 只抽取 `[Rule]` 主体；不采用其 `[General]`、`[Host]`、`[URL Rewrite]`、`[MITM]`。
 - S1.1 来源：继承 S1 方向；Johnshall `lazy.conf` 只做参考和差异监控，blackmatrix7 Shadowrocket `RULE-SET` 作为暂时运行时远程依赖并纳入注册表，iab0x00 只做 AI 域名参考，不作为运行时依赖。
 - S2 来源：`Johnshall/Shadowrocket-ADBlock-Rules-Forever` 的 `lazy.conf` 只抽取 `PROXY` 规则；所有 lazy `DIRECT`、`GEOIP,CN,DIRECT`、`FINAL` 均不得进入 S2。
+- S5 来源：唯一基盘是 `local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`，SHA256 必须为 `D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD`；不得使用旧 S1.1、S2、DNS B、QUIC allow 或任何已作废分支作为基盘。
 
 ## 许可证继承
 
@@ -63,6 +65,7 @@
 - 若进入 S1 场景验证，必须明确：S1 使用 `lazy.conf` 的成熟 `[Rule]` 主体，但仍保留本项目的 `#proxy` DoH、种子表 `[Host]`、前置海外 `PROXY` 和中国 `DIRECT` 保护。
 - 若进入 S1.1 场景验证，必须明确：S1.1 不覆盖 S1，只作为增强验证组；上游变化只生成 Issue 和 PR，未人工确认不得改正式模板。
 - 若进入 S2 场景验证，必须明确：S2 不信任任何第三方 `DIRECT`，中国直连只来自 `references/china-local-domain-seeds.txt` 过滤后的明确白名单。
+- 若进入 S5 MVP，必须明确：V5 私有完整配置只用于清单化来源，公开模板只能由 `references/v5-mvp/` 清单生成，不得公开节点、订阅、账号、代理组或私有完整配置。
 - 只有实机验证有效且没有明显可用性问题的配置项，才允许进入最终 v1。
 - 无法确认有效、效果不稳定或解释不清的配置项，必须写入调研记录，不得进入正式候选结论。
 
@@ -120,6 +123,16 @@ WebRTC/STUN 不作为 v1 配置实现范围。不得默认加入 `stun-response-
 - S2 不使用 `GEOIP,CN,DIRECT`，未知域名统一由 `FINAL,PROXY` 兜底。
 - S2 初始排除 `bytedance.com`、`byteimg.com`、`snssdk.com` 这类模糊跨境域名，避免 TikTok/抖音边界不清。
 - 若中国 App 变慢，优先通过日志补充 `references/china-local-domain-seeds.txt`，不得直接恢复 lazy `DIRECT` 或 `GEOIP,CN,DIRECT`。
+
+## S5 范围
+
+- S5 是 V5 产品化 MVP 验证分支，不是最终配置。
+- `configs/S5-scenario-cn-us-v5-mvp-v0.conf` 是公开规则模板，不含节点和代理组；不能单独代表用户完整 Shadowrocket 配置。
+- S5 生成必须通过 `scripts/build-v5-mvp-template.py`，后续新增域名优先修改 `references/v5-mvp/` 清单，不直接手改最终 `.conf`。
+- S5 保留 V5 的 `#proxy` Cloudflare DoH、`block-quic = all-proxy`、测试站前置 `PROXY`、海外/AI/流媒体前置 `PROXY`、中国 App `[Host] + DIRECT`、远程 `RULE-SET`、`GEOIP,CN,DIRECT` 和 `FINAL,PROXY`。
+- S5 不采纳 DNS B Google fallback 或 QUIC allow。
+- S5 私有完整配置只能通过合并脚本输出到 `local/private-configs/`，不得进入 `configs/`、`docs/`、`references/`、GitHub Pages 或 raw 公开链接。
+- S5 GitHub Pages 发布需要修改 workflow，属于 CI/CD 红线，必须单独确认；raw GitHub 链接只在推送后自然可用。
 
 ## 敏感信息边界
 

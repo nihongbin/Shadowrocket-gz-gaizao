@@ -1,0 +1,3 @@
+# V5 MVP source metadata. Stable values only; do not write runtime timestamps.
+base_path=local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf
+base_sha256=D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD

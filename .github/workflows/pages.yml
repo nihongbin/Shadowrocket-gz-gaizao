@@ -1,4 +1,4 @@
-name: Publish S1.1 Public Template
+name: Publish Public Templates
 
 on:
   push:
@@ -28,15 +28,17 @@ jobs:
         run: |
           mkdir -p public
           cp configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf public/S1-1-scenario-cn-us-lazy-stabilized-v0.conf
+          cp configs/S5-scenario-cn-us-v5-mvp-v0.conf public/S5-scenario-cn-us-v5-mvp-v0.conf
           cat > public/index.html <<'HTML'
           <!doctype html>
           <html lang="zh-CN">
           <meta charset="utf-8">
-          <title>Shadowrocket S1.1 Public Template</title>
+          <title>Shadowrocket Public Templates</title>
           <body>
-            <h1>Shadowrocket S1.1 Public Template</h1>
-            <p>This public template contains no proxy nodes, subscriptions, accounts, or proxy groups.</p>
+            <h1>Shadowrocket Public Templates</h1>
+            <p>These public templates contain no proxy nodes, subscriptions, accounts, or proxy groups.</p>
             <p><a href="./S1-1-scenario-cn-us-lazy-stabilized-v0.conf">S1.1 template</a></p>
+            <p><a href="./S5-scenario-cn-us-v5-mvp-v0.conf">S5 V5 MVP template</a></p>
           </body>
           </html>
           HTML

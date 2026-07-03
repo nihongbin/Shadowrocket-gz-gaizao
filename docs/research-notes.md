@@ -232,6 +232,28 @@
 - 已生成复测文件，现已收纳到 `local/private-configs/desktop-import-2026-07-01/S2-default-strict-app-whitelist.conf`。
 - 验证目标：微信、支付宝、淘宝、小红书、抖音、B 站、高德、Apple 基础服务尽量命中 `DIRECT`；TikTok、YouTube、Instagram、X、Facebook、ChatGPT/Claude、BrowserLeaks 必须命中 `PROXY`。
 
+## 2026-07-02 V5 之后短分支试错结论
+
+- 当前实测主基准回到 V5 私有完整配置：`local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`，SHA256 为 `D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD`。
+- DNS B 只把 `fallback-dns-server` 从 Cloudflare-only 改成 Google + Cloudflare；测试日志未看到 Google fallback 被触发，因此不能证明它改善速度。老倪已删除该测试文件，后续不作为基盘。
+- QUIC allow 只修改 `block-quic` 行；测试日志未看到海外核心域名误走 `DIRECT`，但样本量不足，不能证明它改善海外 App 卡顿。老倪已删除该测试文件，后续不作为基盘。
+- X/Twitter 相关域名在现有日志中均命中 `PROXY`，没有观察到 `DIRECT` 或 `FINAL,PROXY`。因此 X 页面卡顿暂不按“子域名漏规则”处理。
+- 朋友反馈首次打开页面卡很久、再次打开同页面变快，更符合首次建链、缓存、蜂窝链路或节点到平台 CDN 冷启动问题。
+- 后续若海外 App 只是首次慢、再次快，优先做网络、节点、时段对照；只有日志明确显示海外核心域名误走 `DIRECT` 或中国 App 真实域名误走代理，才继续修改 V5。
+- 详细记录见 `docs/v5-test-iteration-notes.md`。
+
+## 2026-07-03 S5 V5 MVP 产品化
+
+- S5 目标：把已实测稳定的 V5 私有规则配置清单化，生成不含节点和代理组的公开 MVP 模板，并保留私有合并闭环。
+- V5 基盘已确认：`local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`，SHA256 为 `D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD`。
+- 新增清单目录：`references/v5-mvp/`。其中 `china-direct-domains.txt` 与 `china-host-dns.csv` 一一对应，保证每个中国 `DIRECT` 域名都有 Host DNS。
+- 新增生成脚本：`scripts/build-v5-mvp-template.py`。脚本从清单生成 `configs/S5-scenario-cn-us-v5-mvp-v0.conf`，不写当前时间，重复生成 hash 稳定。
+- 公开 S5 模板与 V5 的有效 `[General]`、`[Rule]`、`[Host]` 内容保持一致；不包含 `[Proxy]`、`[Proxy Group]`、节点、订阅、账号或密钥。
+- 私有合并脚本 `scripts/merge-s0-private-config.py` 新增 `--v5-mvp` 参数；实测可把用户本地完整配置和 S5 公开模板合并，并只输出到 `local/private-configs/`。
+- 新增用户反馈文档：`docs/v5-mvp-user-test-feedback.md`，只收集版本、网络、节点国家/地区、App/页面、日志命中策略和 DNS 观察，不要求敏感截图或完整 IP。
+- 新增发布闭环文档：`docs/v5-mvp-release-runbook.md`，记录 raw GitHub 链接、GitHub Pages 发布方式、红线确认门和后续清单维护流程。
+- 老倪已确认允许执行发布动作后，Pages workflow 已加入 S5 模板。推送后需要验证 raw GitHub 链接和 GitHub Pages 链接均返回公开 S5 模板内容。
+
 ## 暂不采纳
 
 - NZNL31 完整 `a-nomad` 策略组。
@@ -243,6 +265,7 @@
 - 继续叠加 `.conf` 参数，阶段收口后暂停。
 - 把 Johnshall 或 lazy 的 `DIRECT` 规则当作中国本地域名池来生成 `[Host]`。
 - 在 S2 中恢复 `GEOIP,CN,DIRECT`。
+- 把 DNS B Google fallback 或 QUIC allow 作为 V5 后续基盘；两者本轮均未证明有效。
 
 ## 采纳门槛
 
