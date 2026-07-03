@@ -253,6 +253,7 @@
 - 新增用户反馈文档：`docs/v5-mvp-user-test-feedback.md`，只收集版本、网络、节点国家/地区、App/页面、日志命中策略和 DNS 观察，不要求敏感截图或完整 IP。
 - 新增发布闭环文档：`docs/v5-mvp-release-runbook.md`，记录 raw GitHub 链接、GitHub Pages 发布方式、红线确认门和后续清单维护流程。
 - 老倪已确认允许执行发布动作后，Pages workflow 已加入 S5 模板。推送后需要验证 raw GitHub 链接和 GitHub Pages 链接均返回公开 S5 模板内容。
+- S5 已完成线上验证：raw GitHub 与 GitHub Pages 均返回 HTTP 200，内容 SHA256 均为 `B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`。GitHub Actions `Publish Public Templates` run `28637570862` 成功。
 
 ## 暂不采纳
 

@@ -2,7 +2,7 @@
 
 审计日期：2026-07-03
 
-本文件按原始目标逐项核对当前状态。结论先行：本地产品化闭环已完成；老倪已确认允许执行发布动作后，Pages workflow 已加入 S5 模板，剩余完成证据是 commit、push、raw 链接验证和 GitHub Pages 链接验证。
+本文件按原始目标逐项核对当前状态。结论先行：S5 V5 MVP 本地产品化、公开模板、私有合并闭环、raw GitHub 链接、GitHub Pages 链接和用户反馈流程均已完成并验证。
 
 ## 基盘确认
 
@@ -65,8 +65,10 @@
 - 要求：接入 GitHub Pages / raw GitHub 公开模板更新。
 - raw GitHub：S5 模板提交并推送到 `main` 后，raw 链接自然可用。
 - GitHub Pages：`.github/workflows/pages.yml` 已加入 S5 模板发布项。
-- 状态：待线上验证。
-- 待验证项：commit、push、raw GitHub 链接、GitHub Pages 链接。
+- raw GitHub 验证：`https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S5-scenario-cn-us-v5-mvp-v0.conf` 返回 HTTP 200，SHA256 为 `B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`。
+- GitHub Pages 验证：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/S5-scenario-cn-us-v5-mvp-v0.conf` 返回 HTTP 200，SHA256 为 `B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`。
+- GitHub Actions 验证：`Publish Public Templates` run `28637570862` completed with success.
+- 状态：完成。
 
 ## 用户反馈维护流程
 
@@ -88,11 +90,4 @@
 
 ## 当前剩余动作
 
-要完成完整目标，还需要执行并验证：
-
-1. `git commit`
-2. `git push`
-3. 验证 raw GitHub 链接。
-4. 验证 GitHub Pages 链接。
-
-上述动作已获老倪授权，可以继续执行。
+无。后续只在用户反馈或清单变更时进入维护流程。

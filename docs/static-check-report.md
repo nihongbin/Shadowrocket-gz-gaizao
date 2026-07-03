@@ -208,6 +208,9 @@
 - PASS - S5 用户反馈文档存在：`docs/v5-mvp-user-test-feedback.md`
 - PASS - S5 发布 runbook 存在：`docs/v5-mvp-release-runbook.md`
 - PASS - 老倪已确认允许执行发布动作，Pages workflow 已加入 S5 模板发布项
+- PASS - GitHub Actions `Publish Public Templates` run `28637570862` completed successfully
+- PASS - S5 raw GitHub 链接返回 HTTP 200，SHA256 为 `B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`
+- PASS - S5 GitHub Pages 链接返回 HTTP 200，SHA256 为 `B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`
 
 ## 私有合并检查
 

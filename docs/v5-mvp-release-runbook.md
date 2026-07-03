@@ -9,7 +9,10 @@
 - S5 公开模板：`configs/S5-scenario-cn-us-v5-mvp-v0.conf`
 - S5 公开模板 SHA256：`B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`
 - S5 清单目录：`references/v5-mvp/`
-- Pages workflow 已加入 S5 模板发布项；commit、push 和线上链接验证仍需在发布流程中完成。
+- Pages workflow 已加入 S5 模板发布项；raw GitHub 和 GitHub Pages 链接已完成线上验证。
+- raw GitHub S5 链接：`https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S5-scenario-cn-us-v5-mvp-v0.conf`
+- GitHub Pages S5 链接：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/S5-scenario-cn-us-v5-mvp-v0.conf`
+- 已验证 S5 SHA256：`B1E2FFA0F55E27B2B10A55F2917A2228972619377A3C746D10AC5C11AEBF7712`
 
 ## 红线确认门
 
