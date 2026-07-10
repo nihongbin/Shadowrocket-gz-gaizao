@@ -23,10 +23,16 @@ class V5AutomationWorkflowTests(unittest.TestCase):
         self.assertNotIn("actions/setup-python@v5", combined)
         self.assertNotIn("actions/github-script@v7", combined)
         self.assertNotIn("peter-evans/create-pull-request@v7", combined)
+        self.assertNotIn("actions/configure-pages@v5", combined)
+        self.assertNotIn("actions/upload-pages-artifact@v3", combined)
+        self.assertNotIn("actions/deploy-pages@v4", combined)
         self.assertIn("actions/checkout@v7", combined)
         self.assertIn("actions/setup-python@v6", combined)
         self.assertIn("actions/github-script@v9", combined)
         self.assertIn("peter-evans/create-pull-request@v8", combined)
+        self.assertIn("actions/configure-pages@v6", combined)
+        self.assertIn("actions/upload-pages-artifact@v5", combined)
+        self.assertIn("actions/deploy-pages@v5", combined)
 
     def test_daily_monitor_opens_issue_without_writing_repository(self) -> None:
         text = MONITOR_WORKFLOW.read_text(encoding="utf-8")
