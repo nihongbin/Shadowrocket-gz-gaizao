@@ -36,4 +36,12 @@
 - PASS - raw、Pages 与本地 S5 SHA256 均为 `12B992F086738407E55653184DD6C7FF5FCA3740E96C4CB2B775ECDF45FB1B78`。
 - PASS - 旧 S1.1 公开文件已从 raw 和 Pages 移除。
 - PASS - 旧 S1.1 Issue、PR 和远程自动化分支已收口。
-- PENDING - 本轮治理提交尚待推送并完成 Actions、模拟 Issue、raw 和 Pages 快照线上验收。
+
+以上是单一 V5/S5 收敛时的历史发布验收。本轮治理闭环追加完成：
+
+- PASS - 快照治理提交 `0eadf9c` 和 Node 24 workflow 更新 `c60dc1f` / `70c35ea` 已推送。
+- PASS - Pages run `29083150629`、validation run `29083016651`、无变化 monitor run `29083016958`、无变化 apply run `29083016586` 均成功。
+- PASS - 模拟 monitor run `29083194225` 创建 Issue #4；模拟批准 gate run `29083221851` 正确跳过全部更新和 PR 步骤。
+- PASS - Issue #4 已关闭，开放 PR 为 0。
+- PASS - 当前 S5 本地/raw/Pages SHA256 均为 `80F81FEF8619F4BD995D55C8020E5C0CF2C717DF8487050CDE75812AAE0A732A`。
+- PASS - YouTube 快照本地/raw/Pages SHA256 均为 `E9E44675390E8588B19589590A68C01CA570A57BDD4BE52B6DBA69DF5856269B`。

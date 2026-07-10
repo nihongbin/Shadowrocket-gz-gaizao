@@ -36,6 +36,7 @@
 - 无变化不通知；变化、拉取异常或快照漂移创建/更新 GitHub Issue。
 - 真实 Issue 经授权成员评论 `/approve-v5-ruleset-update` 后，自动化才重新拉取、测试并创建 PR；不会自动合并。
 - 本地真实拉取演练结果为 0 变化；YouTube 内存模拟成功识别 1 条新增规则，且没有写仓库。
+- 线上真实无变化监控、模拟 Issue 通知、模拟批准拒绝、无变化 apply、validation 和 Pages 镜像均已通过；模拟 Issue #4 已关闭，未创建 PR。
 
 ## 当前风险
 

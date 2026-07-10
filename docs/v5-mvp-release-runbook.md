@@ -55,7 +55,18 @@ python scripts\merge-v5-private-config.py `
 - raw / Pages：HTTP 200
 - 线上 SHA256：`12B992F086738407E55653184DD6C7FF5FCA3740E96C4CB2B775ECDF45FB1B78`
 
-以上是规则源治理前的历史验收记录；本轮线上结果以新的 Actions run 和 `80F81...732A` 为准，推送后补录。
+以上是规则源治理前的历史验收记录。
+
+规则源治理线上验收：
+
+- 实现提交：`0eadf9c`
+- Node 24 workflow 提交：`c60dc1f`、`70c35ea`
+- Pages：run `29083150629`
+- validation：run `29083016651`
+- 无变化 monitor / apply：run `29083016958` / `29083016586`
+- 模拟 Issue / 拒绝门：Issue #4、run `29083194225` / `29083221851`
+- S5 raw / Pages：HTTP 200，SHA256 `80F81FEF8619F4BD995D55C8020E5C0CF2C717DF8487050CDE75812AAE0A732A`
+- YouTube 快照 raw / Pages：HTTP 200，SHA256 `E9E44675390E8588B19589590A68C01CA570A57BDD4BE52B6DBA69DF5856269B`
 
 ## 上游变化闭环
 

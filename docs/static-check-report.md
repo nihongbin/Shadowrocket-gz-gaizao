@@ -64,4 +64,15 @@ python scripts\check-v5-consistency.py
 - PASS - GitHub Pages 返回 HTTP 200，SHA256 与本地 S5 一致。
 - PASS - 旧 S1.1 raw 和 Pages 链接均返回 HTTP 404。
 - PASS - 旧 S1.1 Issue #1、PR #2 和远程自动化分支已关闭或删除。
-- PENDING - 本轮快照、监控、批准后 PR 和 Pages 镜像尚待提交推送后的 Actions、Issue 通知、raw/Pages hash 复验。
+
+## 规则源治理线上验收
+
+- PASS - 治理实现提交 `0eadf9c`、Node 24 workflow 更新 `c60dc1f` / `70c35ea` 已推送到 `main`。
+- PASS - 最终 Pages workflow run `29083150629` 成功，发布 S5 和 33 个快照镜像。
+- PASS - 独立 validation run `29083016651`、真实无变化 monitor run `29083016958`、无变化 apply run `29083016586` 均成功。
+- PASS - Node 24 模拟变化 run `29083194225` 创建 Issue #4，报告 1 条 YouTube 模拟新增规则。
+- PASS - 在模拟 Issue 输入批准命令后，gate run `29083221851` 拒绝继续；写仓库、更新、PR 和验证分支步骤全部跳过。
+- PASS - Issue #4 已在验证后关闭；开放 PR 为 0，没有把模拟变化写入正式配置。
+- PASS - S5 本地/raw/Pages SHA256 均为 `80F81FEF8619F4BD995D55C8020E5C0CF2C717DF8487050CDE75812AAE0A732A`。
+- PASS - YouTube 快照本地/raw/Pages SHA256 均为 `E9E44675390E8588B19589590A68C01CA570A57BDD4BE52B6DBA69DF5856269B`。
+- INFO - 官方 `actions/deploy-pages@v5` 仍输出一条其依赖的 `punycode` 弃用提示，但没有 Node 20 action 警告，发布结果成功且 hash 一致。
