@@ -12,6 +12,22 @@ PAGES_WORKFLOW = ROOT / ".github" / "workflows" / "pages.yml"
 
 
 class V5AutomationWorkflowTests(unittest.TestCase):
+    def test_workflows_use_current_node24_action_majors(self) -> None:
+        workflow_texts = [
+            path.read_text(encoding="utf-8")
+            for path in (MONITOR_WORKFLOW, APPLY_WORKFLOW, VALIDATE_WORKFLOW, PAGES_WORKFLOW)
+        ]
+        combined = "\n".join(workflow_texts)
+
+        self.assertNotIn("actions/checkout@v4", combined)
+        self.assertNotIn("actions/setup-python@v5", combined)
+        self.assertNotIn("actions/github-script@v7", combined)
+        self.assertNotIn("peter-evans/create-pull-request@v7", combined)
+        self.assertIn("actions/checkout@v7", combined)
+        self.assertIn("actions/setup-python@v6", combined)
+        self.assertIn("actions/github-script@v9", combined)
+        self.assertIn("peter-evans/create-pull-request@v8", combined)
+
     def test_daily_monitor_opens_issue_without_writing_repository(self) -> None:
         text = MONITOR_WORKFLOW.read_text(encoding="utf-8")
 
