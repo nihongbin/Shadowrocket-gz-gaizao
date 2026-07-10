@@ -8,6 +8,7 @@
 - 本地 V5 与公开 S5 的 `[General]`、`[Rule]`、`[Host]` 有效内容逐条一致。
 - 旧 A/B/C/D、S0、S1、S1.1、S2 配置、生成脚本和自动化已从当前文件树删除。
 - 旧试验仍可通过 Git 历史追溯；DNS B 和 QUIC allow 的无效结论继续记录在 `v5-test-iteration-notes.md`。
+- 收敛提交 `35739b1` 已发布；raw 与 Pages 均返回新 S5 hash，旧 S1.1 链接已失效。
 
 ## 当前底层逻辑
 

@@ -42,6 +42,13 @@ python scripts\merge-v5-private-config.py `
 - raw：`https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S5-scenario-cn-us-v5-mvp-v0.conf`
 - Pages：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/S5-scenario-cn-us-v5-mvp-v0.conf`
 
+最近一次线上验收：
+
+- 收敛提交：`35739b1`
+- GitHub Actions run：`29080423533`
+- raw / Pages：HTTP 200
+- 线上 SHA256：`12B992F086738407E55653184DD6C7FF5FCA3740E96C4CB2B775ECDF45FB1B78`
+
 ## 回滚
 
 - 规则行为异常时，手机先回滚到本地已实测 V5。

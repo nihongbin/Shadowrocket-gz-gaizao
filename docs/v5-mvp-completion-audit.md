@@ -26,9 +26,9 @@
 
 ## 发布验收
 
-本次收敛提交推送后必须确认：
-
-- GitHub Actions Pages workflow 成功。
-- raw GitHub 返回 HTTP 200。
-- GitHub Pages 返回 HTTP 200。
-- raw、Pages 与本地 S5 SHA256 一致。
+- PASS - 收敛提交 `35739b1` 已推送到 `main`。
+- PASS - GitHub Actions run `29080423533` 成功完成测试和 Pages 发布。
+- PASS - raw GitHub 与 GitHub Pages 均返回 HTTP 200。
+- PASS - raw、Pages 与本地 S5 SHA256 均为 `12B992F086738407E55653184DD6C7FF5FCA3740E96C4CB2B775ECDF45FB1B78`。
+- PASS - 旧 S1.1 公开文件已从 raw 和 Pages 移除。
+- PASS - 旧 S1.1 Issue、PR 和远程自动化分支已收口。

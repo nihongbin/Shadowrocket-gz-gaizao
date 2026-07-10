@@ -42,4 +42,11 @@ python scripts\build-v5-mvp-template.py --check
 python scripts\check-v5-consistency.py
 ```
 
-线上 raw 和 Pages hash 在本次提交推送后重新验证，并记录在发布验收结果中。
+## 线上验收
+
+- PASS - 收敛提交：`35739b1`。
+- PASS - GitHub Actions `Publish V5 Public Template` run `29080423533` completed successfully。
+- PASS - raw GitHub 返回 HTTP 200，SHA256 为 `12B992F086738407E55653184DD6C7FF5FCA3740E96C4CB2B775ECDF45FB1B78`。
+- PASS - GitHub Pages 返回 HTTP 200，SHA256 与本地 S5 一致。
+- PASS - 旧 S1.1 raw 和 Pages 链接均返回 HTTP 404。
+- PASS - 旧 S1.1 Issue #1、PR #2 和远程自动化分支已关闭或删除。
