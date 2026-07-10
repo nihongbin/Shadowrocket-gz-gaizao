@@ -10,10 +10,12 @@
 ## blackmatrix7
 
 - Project: `blackmatrix7/ios_rule_script`
-- Adopted scope: the Shadowrocket `RULE-SET` URLs listed in `remote-rulesets.csv`.
-- Runtime note: these URLs currently point to the upstream `master` branch and can change without a local template commit.
-- Maintenance boundary: an upstream change is not automatically considered verified for V5; phone behavior must be reviewed before changing local manifests.
+- Adopted scope: the 33 Shadowrocket lists registered in `ruleset-sources.json`.
+- Upstream license: GNU General Public License v2.0 (`GPL-2.0`).
+- Redistribution: canonical snapshots are stored separately in `rulesets/v5/`; their license copy is `rulesets/v5/LICENSE.blackmatrix7-GPL-2.0.txt`.
+- Runtime boundary: S5 references this repository's snapshots, not blackmatrix7 `master` directly.
+- Maintenance boundary: daily monitoring compares effective rule semantics. Upstream changes require an Issue, explicit authorization, a tested PR, manual review, and manual merge.
 
 ## Project License
 
-The public S5 template is distributed under CC BY-SA 4.0. Keep this attribution and the repository `LICENSE` notice when redistributing an adapted template.
+The public S5 template and project-authored manifests are distributed under CC BY-SA 4.0. The separately stored blackmatrix7 snapshot contents remain GPL-2.0. Keep both notices when redistributing the corresponding files.

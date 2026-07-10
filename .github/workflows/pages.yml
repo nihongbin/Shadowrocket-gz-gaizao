@@ -32,12 +32,28 @@ jobs:
       - name: Validate governed S5 template
         run: |
           python -m unittest discover -s tests -v
+          python scripts/manage-v5-rulesets.py validate
           python scripts/build-v5-mvp-template.py --check
 
       - name: Prepare public artifact
         run: |
           mkdir -p public
           cp configs/S5-scenario-cn-us-v5-mvp-v0.conf public/S5-scenario-cn-us-v5-mvp-v0.conf
+          mkdir -p public/rulesets
+          cp -R rulesets/v5 public/rulesets/v5
+          cat > public/rulesets/v5/index.html <<'RULES_HTML'
+          <!doctype html>
+          <html lang="zh-CN">
+          <meta charset="utf-8">
+          <title>V5 Governed RULE-SET Snapshots</title>
+          <body>
+            <h1>V5 Governed RULE-SET Snapshots</h1>
+            <p>These snapshots contain public routing rules only. They contain no proxy nodes, subscriptions, accounts, or proxy groups.</p>
+            <p><a href="./youtube.list">YouTube snapshot example</a></p>
+            <p><a href="./LICENSE.blackmatrix7-GPL-2.0.txt">blackmatrix7 GPL-2.0 license</a></p>
+          </body>
+          </html>
+          RULES_HTML
           cat > public/index.html <<'HTML'
           <!doctype html>
           <html lang="zh-CN">
@@ -47,6 +63,7 @@ jobs:
             <h1>Shadowrocket Public Templates</h1>
             <p>These public templates contain no proxy nodes, subscriptions, accounts, or proxy groups.</p>
             <p><a href="./S5-scenario-cn-us-v5-mvp-v0.conf">S5 V5 MVP template</a></p>
+            <p><a href="./rulesets/v5/">Governed V5 RULE-SET snapshots</a></p>
           </body>
           </html>
           HTML

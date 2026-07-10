@@ -1,0 +1,25 @@
+# V5 governed RULE-SET snapshot: SteamCN/SteamCN
+# Upstream: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/SteamCN/SteamCN.list
+# Semantic-SHA256: E5541C7DB5D9396A8BE97205AC5A3742B318A391F39946C2A1C8239FB567FB15
+# Rule-Count: 17
+# Derived from blackmatrix7/ios_rule_script under GPL-2.0.
+# License: LICENSE.blackmatrix7-GPL-2.0.txt
+# No runtime timestamp is stored; comments, order, and duplicates are normalized.
+
+DOMAIN,csgo.wmsj.cn
+DOMAIN,dl.steam.clngaa.com
+DOMAIN,dl.steam.ksyna.com
+DOMAIN,dota2.wmsj.cn
+DOMAIN,st.dl.bscstorage.net
+DOMAIN,st.dl.eccdnx.com
+DOMAIN,st.dl.pinyuncloud.com
+DOMAIN,steampipe.steamcontent.tnkjmec.com
+DOMAIN,steampowered.com.8686c.com
+DOMAIN,steamstatic.com.8686c.com
+DOMAIN,wmsjsteam.com
+DOMAIN,xz.pphimalayanrt.com
+DOMAIN-SUFFIX,cm.steampowered.com
+DOMAIN-SUFFIX,steamchina.com
+DOMAIN-SUFFIX,steamcontent.com
+DOMAIN-SUFFIX,steamserver.net
+DOMAIN-SUFFIX,steamusercontent.com

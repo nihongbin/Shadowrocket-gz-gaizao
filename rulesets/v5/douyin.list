@@ -1,0 +1,21 @@
+# V5 governed RULE-SET snapshot: DouYin/DouYin
+# Upstream: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/DouYin/DouYin.list
+# Semantic-SHA256: A5506847AAF6C46C6E58446C6EDD336594DA50962C16732614949E357649450F
+# Rule-Count: 13
+# Derived from blackmatrix7/ios_rule_script under GPL-2.0.
+# License: LICENSE.blackmatrix7-GPL-2.0.txt
+# No runtime timestamp is stored; comments, order, and duplicates are normalized.
+
+DOMAIN,lf3-static.bytednsdoc.com
+DOMAIN,v5-dy-o-abtest.zjcdn.com
+DOMAIN-SUFFIX,amemv.com
+DOMAIN-SUFFIX,douyincdn.com
+DOMAIN-SUFFIX,douyinpic.com
+DOMAIN-SUFFIX,douyinstatic.com
+DOMAIN-SUFFIX,douyinvod.com
+DOMAIN-SUFFIX,idouyinvod.com
+DOMAIN-SUFFIX,ixigua.com
+DOMAIN-SUFFIX,ixiguavideo.com
+DOMAIN-SUFFIX,pstatp.com
+DOMAIN-SUFFIX,snssdk.com
+DOMAIN-SUFFIX,toutiao.com

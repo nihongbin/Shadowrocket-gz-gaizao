@@ -1,0 +1,12 @@
+# V5 governed RULE-SET snapshot: XiaoHongShu/XiaoHongShu
+# Upstream: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/XiaoHongShu/XiaoHongShu.list
+# Semantic-SHA256: 3D37C3A1CB8D59CCD5B34BA8350AAA0D5E66C7CF56DAB568DDF2BF1EABED1429
+# Rule-Count: 4
+# Derived from blackmatrix7/ios_rule_script under GPL-2.0.
+# License: LICENSE.blackmatrix7-GPL-2.0.txt
+# No runtime timestamp is stored; comments, order, and duplicates are normalized.
+
+DOMAIN-SUFFIX,fengkongcloud.com
+DOMAIN-SUFFIX,xhscdn.com
+DOMAIN-SUFFIX,xhscdn.net
+DOMAIN-SUFFIX,xiaohongshu.com

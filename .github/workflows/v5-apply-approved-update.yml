@@ -1,0 +1,173 @@
+name: Apply Approved V5 Ruleset Update
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Optional real monitor issue number"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: v5-approved-ruleset-update
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.issue.pull_request == null }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authorize explicit approval
+        id: gate
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const allowedAssociations = ['OWNER', 'MEMBER', 'COLLABORATOR'];
+            let approved = false;
+            let issueNumber = '';
+
+            if (context.eventName === 'workflow_dispatch') {
+              approved = true;
+              issueNumber = context.payload.inputs?.issue_number || '';
+            } else {
+              const issue = context.payload.issue;
+              const comment = context.payload.comment;
+              const commandPresent = comment.body
+                .split(/\r?\n/)
+                .map(line => line.trim())
+                .includes('/approve-v5-ruleset-update');
+              const hasMonitorLabel = issue.labels.some(label =>
+                (typeof label === 'string' ? label : label.name) === 'v5-ruleset-monitor'
+              );
+              const isRealMonitorIssue =
+                issue.title === '[V5规则源监控] 上游变化或异常待确认' &&
+                !issue.title.includes('[模拟]');
+              approved =
+                commandPresent &&
+                hasMonitorLabel &&
+                isRealMonitorIssue &&
+                allowedAssociations.includes(comment.author_association);
+              issueNumber = String(issue.number);
+            }
+
+            core.setOutput('approved', String(approved));
+            core.setOutput('issue_number', issueNumber);
+            core.setOutput(
+              'issue_reference',
+              issueNumber ? `Closes #${issueNumber}` : 'Triggered by an authorized manual workflow dispatch.'
+            );
+            if (!approved) {
+              core.notice('Ignored: exact approval command, monitor issue, label, or authorized association is missing.');
+            }
+
+      - name: Checkout trusted main branch
+        if: steps.gate.outputs.approved == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        if: steps.gate.outputs.approved == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate current governed baseline
+        if: steps.gate.outputs.approved == 'true'
+        run: |
+          python scripts/manage-v5-rulesets.py validate
+          python scripts/build-v5-mvp-template.py --check
+
+      - name: Apply current upstream semantics to review branch
+        if: steps.gate.outputs.approved == 'true'
+        id: update
+        run: |
+          python scripts/manage-v5-rulesets.py sync --github-output "$GITHUB_OUTPUT"
+
+      - name: Rebuild and test proposed update
+        if: steps.gate.outputs.approved == 'true' && steps.update.outputs.has_changes == 'true'
+        run: |
+          python scripts/build-v5-mvp-template.py
+          python -m unittest discover -s tests -v
+          python scripts/manage-v5-rulesets.py validate
+          python scripts/build-v5-mvp-template.py --check
+
+      - name: Create review pull request without merging
+        if: steps.gate.outputs.approved == 'true' && steps.update.outputs.has_changes == 'true'
+        id: create-pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/v5-ruleset-update
+          base: main
+          delete-branch: true
+          commit-message: "Update reviewed V5 ruleset snapshots"
+          title: "Review V5 upstream ruleset changes"
+          body: |
+            This PR was created only after explicit authorization.
+
+            - Changed source ids: `${{ steps.update.outputs.changed_ids }}`
+            - Full tests passed before PR creation.
+            - No private config, node, subscription, account, or proxy group is included.
+            - This PR is not auto-merged. Review the semantic diff and phone-test before merging.
+
+            ${{ steps.gate.outputs.issue_reference }}
+          labels: v5-ruleset-monitor
+          add-paths: |
+            rulesets/v5/**
+            references/v5-mvp/ruleset-sources.json
+            references/v5-mvp/remote-rulesets.csv
+            references/v5-mvp/lazy-body-rules.txt
+            configs/S5-scenario-cn-us-v5-mvp-v0.conf
+
+      - name: Dispatch independent validation for automation branch
+        if: >-
+          steps.gate.outputs.approved == 'true' &&
+          steps.update.outputs.has_changes == 'true' &&
+          steps.create-pr.outputs.pull-request-url != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run v5-validation.yml --ref automation/v5-ruleset-update
+
+      - name: Comment with pull request URL
+        if: >-
+          steps.gate.outputs.approved == 'true' &&
+          steps.update.outputs.has_changes == 'true' &&
+          steps.gate.outputs.issue_number != ''
+        uses: actions/github-script@v7
+        env:
+          ISSUE_NUMBER: ${{ steps.gate.outputs.issue_number }}
+          PR_URL: ${{ steps.create-pr.outputs.pull-request-url }}
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: Number(process.env.ISSUE_NUMBER),
+              body: `已生成待人工审查 PR：${process.env.PR_URL}\n\n不会自动合并。`
+            });
+
+      - name: Report no current semantic change
+        if: >-
+          steps.gate.outputs.approved == 'true' &&
+          steps.update.outputs.has_changes != 'true' &&
+          steps.gate.outputs.issue_number != ''
+        uses: actions/github-script@v7
+        env:
+          ISSUE_NUMBER: ${{ steps.gate.outputs.issue_number }}
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: Number(process.env.ISSUE_NUMBER),
+              body: '重新拉取后已没有语义变化，因此没有创建 PR，也没有修改正式配置。'
+            });

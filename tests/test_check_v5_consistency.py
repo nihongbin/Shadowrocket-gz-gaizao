@@ -41,6 +41,23 @@ class CheckV5ConsistencyTests(unittest.TestCase):
         result = checker.compare_effective_sections(private, public)
         self.assertFalse(result["Rule"])
 
+    def test_governed_ruleset_url_is_equivalent_to_locked_upstream_identity(self) -> None:
+        checker = load_checker()
+        private = PRIVATE_V5.read_text(encoding="utf-8-sig")
+        upstream = (
+            "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/"
+            "rule/Shadowrocket/YouTube/YouTube.list"
+        )
+        governed = (
+            "https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/"
+            "main/rulesets/v5/youtube.list"
+        )
+        public = private.replace(upstream, governed, 1)
+
+        result = checker.compare_effective_sections(private, public)
+
+        self.assertTrue(result["Rule"])
+
 
 if __name__ == "__main__":
     unittest.main()

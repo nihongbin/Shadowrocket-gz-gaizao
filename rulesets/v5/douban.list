@@ -1,0 +1,11 @@
+# V5 governed RULE-SET snapshot: DouBan/DouBan
+# Upstream: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/DouBan/DouBan.list
+# Semantic-SHA256: 2FE30007B7116F4B1AAEA378DA84E247611E0C6FC06C5D8EA5DC351A46A14A9F
+# Rule-Count: 3
+# Derived from blackmatrix7/ios_rule_script under GPL-2.0.
+# License: LICENSE.blackmatrix7-GPL-2.0.txt
+# No runtime timestamp is stored; comments, order, and duplicates are normalized.
+
+DOMAIN-SUFFIX,douban.com
+DOMAIN-SUFFIX,douban.fm
+DOMAIN-SUFFIX,doubanio.com

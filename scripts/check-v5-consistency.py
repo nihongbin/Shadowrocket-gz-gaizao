@@ -10,10 +10,18 @@ from collections import OrderedDict
 from pathlib import Path
 
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import v5_rulesets as governed_rulesets
+
+
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE_ROOT = ROOT / "local" / "private-configs"
 PRIVATE_V5 = PRIVATE_ROOT / "S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf"
 PUBLIC_S5 = ROOT / "configs" / "S5-scenario-cn-us-v5-mvp-v0.conf"
+RULESET_REGISTRY = ROOT / governed_rulesets.REGISTRY_RELATIVE_PATH
 EXPECTED_PRIVATE_SHA256 = "D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD"
 PUBLIC_SECTIONS = ("General", "Rule", "Host")
 
@@ -36,10 +44,38 @@ def effective_sections(text: str) -> "OrderedDict[str, list[str]]":
     return sections
 
 
+def ruleset_identity_map() -> dict[str, str]:
+    registry = governed_rulesets.load_registry(RULESET_REGISTRY, ROOT)
+    identities: dict[str, str] = {}
+    for entry in registry["sources"]:
+        identity = f"v5-governed:{entry['id']}"
+        identities[entry["upstream_url"]] = identity
+        identities[entry["public_url"]] = identity
+    return identities
+
+
+def normalize_rule_identities(lines: list[str]) -> list[str]:
+    identities = ruleset_identity_map()
+    normalized: list[str] = []
+    for line in lines:
+        parts = [part.strip() for part in line.split(",", 2)]
+        if len(parts) == 3 and parts[0].upper() == "RULE-SET":
+            identity = identities.get(parts[1])
+            if identity:
+                normalized.append(f"RULE-SET,{identity},{parts[2]}")
+                continue
+        normalized.append(line)
+    return normalized
+
+
 def compare_effective_sections(private_text: str, public_text: str) -> dict[str, bool]:
     private = effective_sections(private_text)
     public = effective_sections(public_text)
-    return {name: private.get(name) == public.get(name) for name in PUBLIC_SECTIONS}
+    result = {name: private.get(name) == public.get(name) for name in PUBLIC_SECTIONS}
+    result["Rule"] = normalize_rule_identities(private.get("Rule", [])) == normalize_rule_identities(
+        public.get("Rule", [])
+    )
+    return result
 
 
 def main() -> int:

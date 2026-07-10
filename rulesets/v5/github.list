@@ -1,0 +1,39 @@
+# V5 governed RULE-SET snapshot: GitHub/GitHub
+# Upstream: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/GitHub/GitHub.list
+# Semantic-SHA256: 5AAE2744EDE61222451A959AEF0F5316192E7AE02E41E8FFFF5650B6B126423B
+# Rule-Count: 31
+# Derived from blackmatrix7/ios_rule_script under GPL-2.0.
+# License: LICENSE.blackmatrix7-GPL-2.0.txt
+# No runtime timestamp is stored; comments, order, and duplicates are normalized.
+
+DOMAIN-KEYWORD,github
+DOMAIN-SUFFIX,atom.io
+DOMAIN-SUFFIX,dependabot.com
+DOMAIN-SUFFIX,ghcr.io
+DOMAIN-SUFFIX,git.io
+DOMAIN-SUFFIX,github-atom-io-herokuapp-com.freetls.fastly.net
+DOMAIN-SUFFIX,github-avatars.oss-cn-hongkong.aliyuncs.com
+DOMAIN-SUFFIX,github-cloud.s3.amazonaws.com
+DOMAIN-SUFFIX,github.blog
+DOMAIN-SUFFIX,github.com
+DOMAIN-SUFFIX,github.community
+DOMAIN-SUFFIX,github.dev
+DOMAIN-SUFFIX,github.io
+DOMAIN-SUFFIX,githubapp.com
+DOMAIN-SUFFIX,githubassets.com
+DOMAIN-SUFFIX,githubcopilot.com
+DOMAIN-SUFFIX,githubhackathon.com
+DOMAIN-SUFFIX,githubnext.com
+DOMAIN-SUFFIX,githubpreview.dev
+DOMAIN-SUFFIX,githubstatus.com
+DOMAIN-SUFFIX,githubuniverse.com
+DOMAIN-SUFFIX,githubusercontent.com
+DOMAIN-SUFFIX,myoctocat.com
+DOMAIN-SUFFIX,npm.community
+DOMAIN-SUFFIX,npmjs.com
+DOMAIN-SUFFIX,npmjs.org
+DOMAIN-SUFFIX,opensource.guide
+DOMAIN-SUFFIX,rawgit.com
+DOMAIN-SUFFIX,rawgithub.com
+DOMAIN-SUFFIX,repo.new
+DOMAIN-SUFFIX,thegithubshop.com

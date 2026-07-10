@@ -6,6 +6,8 @@
 
 - 私有实测基盘：`S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`
 - 公开模板：`S5-scenario-cn-us-v5-mvp-v0.conf`
+- 当前公开模板 `manifest_revision`：`00CB8614DD7006F3A8336323C6A14E4DA78E566447552E8D5128D630005DE94E`。
+- 本版本首次把 33 个第三方 `RULE-SET` URL 改为本仓库受控快照；规则策略和顺序未变。
 - 公开模板文件头包含 `manifest_revision`，反馈时请一并填写。
 
 ## 测试前提
@@ -14,6 +16,7 @@
 - 固定同一个节点国家/地区，同一轮不要频繁换节点。
 - 切换配置后断开 Shadowrocket，再重新连接。
 - Wi-Fi 和蜂窝分开记录。
+- 首次使用本版本时，在 Shadowrocket 规则集页面确认相关 URL 可加载；红叉或长期加载失败要记录规则集名称和 URL 类型，不上传节点信息。
 
 ## 中国 App
 
@@ -59,6 +62,7 @@ manifest_revision：
 相关域名：
 命中策略：DIRECT / PROXY / FINAL,PROXY
 DNS 国家/地区或服务商：不写完整 IP
+相关 RULE-SET 状态：成功 / 失败 / 未观察
 
 是否只在蜂窝出现：
 是否换节点后改善：

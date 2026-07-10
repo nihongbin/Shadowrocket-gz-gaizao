@@ -1,0 +1,23 @@
+# V5 governed RULE-SET snapshot: Epic/Epic
+# Upstream: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Epic/Epic.list
+# Semantic-SHA256: 7996135BC776B0D0BA2CDD4A2474BC3604E5A6DC3A95F03A2FE88BFE79B573EA
+# Rule-Count: 15
+# Derived from blackmatrix7/ios_rule_script under GPL-2.0.
+# License: LICENSE.blackmatrix7-GPL-2.0.txt
+# No runtime timestamp is stored; comments, order, and duplicates are normalized.
+
+DOMAIN-SUFFIX,battlebreakers.com
+DOMAIN-SUFFIX,eac-cdn.com
+DOMAIN-SUFFIX,easy.ac
+DOMAIN-SUFFIX,easyanticheat.net
+DOMAIN-SUFFIX,epicgames.com
+DOMAIN-SUFFIX,epicgames.dev
+DOMAIN-SUFFIX,fortnite.com
+DOMAIN-SUFFIX,helpshift.com
+DOMAIN-SUFFIX,paragon.com
+DOMAIN-SUFFIX,playparagon.com
+DOMAIN-SUFFIX,roborecall.com
+DOMAIN-SUFFIX,shadowcomplex.com
+DOMAIN-SUFFIX,spyjinx.com
+DOMAIN-SUFFIX,unrealengine.com
+DOMAIN-SUFFIX,unrealtournament.com

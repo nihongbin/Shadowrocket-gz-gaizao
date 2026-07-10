@@ -18,6 +18,13 @@ from collections import OrderedDict
 from pathlib import Path
 
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import v5_rulesets as governed_rulesets
+
+
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BASE_PATH = ROOT / "local" / "private-configs" / "S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf"
 EXPECTED_BASE_SHA256 = "D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD"
@@ -56,6 +63,7 @@ MANIFEST_BUILD_INPUTS = (
     "ai-proxy-rules.txt",
     "china-direct-domains.txt",
     "china-host-dns.csv",
+    "ruleset-sources.json",
     "remote-rulesets.csv",
     "lazy-body-rules.txt",
 )
@@ -330,6 +338,36 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
     if missing_wildcard:
         raise ValueError(f"Host DNS missing wildcard entries: {missing_wildcard[:10]}")
 
+    governed_registry_path = manifest_dir / "ruleset-sources.json"
+    if governed_registry_path.exists():
+        registry = governed_rulesets.load_registry(governed_registry_path, ROOT)
+        by_upstream = {
+            entry["upstream_url"]: entry for entry in registry["sources"]
+        }
+        if len(remote_rulesets) != len(registry["sources"]):
+            raise ValueError("private V5 RULE-SET count differs from governed registry")
+        governed_remote: list[tuple[str, str, str]] = []
+        for policy, _name, upstream_url in remote_rulesets:
+            entry = by_upstream.get(upstream_url)
+            if entry is None or entry["policy"] != policy:
+                raise ValueError(f"private V5 RULE-SET is not governed: {upstream_url}")
+            governed_remote.append((policy, entry["name"], entry["public_url"]))
+        remote_rulesets = governed_remote
+
+        governed_lazy: list[str] = []
+        for rule in lazy_body_rules:
+            parts = split_rule(rule)
+            if parts[0].upper() != "RULE-SET":
+                governed_lazy.append(rule)
+                continue
+            entry = by_upstream.get(parts[1])
+            if entry is None or entry["policy"] != parts[2].upper():
+                raise ValueError(f"private V5 lazy RULE-SET is not governed: {rule}")
+            governed_lazy.append(
+                f"RULE-SET,{entry['public_url']},{entry['policy']}"
+            )
+        lazy_body_rules = governed_lazy
+
     write_lines(manifest_dir / "source-metadata.txt", [
         "# V5 MVP source metadata. Stable values only; do not write runtime timestamps.",
         f"base_path=local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf",
@@ -393,7 +431,8 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
         "- `ai-proxy-rules.txt`: AI and AI-adjacent `PROXY` rules.",
         "- `china-direct-domains.txt`: China App / China service domains allowed to `DIRECT`.",
         "- `china-host-dns.csv`: China Host DNS mapping. Must contain every China DIRECT domain.",
-        "- `remote-rulesets.csv`: remote `RULE-SET` registry used by V5.",
+        "- `ruleset-sources.json`: authoritative upstream and governed snapshot registry.",
+        "- `remote-rulesets.csv`: generated public `RULE-SET` URL view used by V5.",
         "- `lazy-body-rules.txt`: full V5 lazy body rule order used by the generated template.",
         "- `candidate-observations.md`: excluded or watch-only items.",
         "- `upstream-sources.md`: upstream attribution, license, and runtime dependency notes.",
@@ -408,8 +447,11 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
         "",
         "```powershell",
         "python scripts\\build-v5-mvp-template.py --check",
+        "python scripts\\manage-v5-rulesets.py validate",
         "python scripts\\check-v5-consistency.py",
         "```",
+        "",
+        "Do not edit snapshot content or hashes by hand. Upstream semantic changes require explicit authorization and a review PR.",
     ])
 
     return {
@@ -448,6 +490,9 @@ def build_template(manifest_dir: Path) -> str:
     host_dns = read_host_dns(manifest_dir / "china-host-dns.csv")
     remote_rulesets = read_ruleset_registry(manifest_dir / "remote-rulesets.csv")
     lazy_body_rules = read_manifest_lines(manifest_dir / "lazy-body-rules.txt")
+    governed_registry = governed_rulesets.load_registry(
+        manifest_dir / "ruleset-sources.json", ROOT
+    )
 
     for rule in [*test_rules, *overseas_rules, *ai_rules]:
         validate_rule(rule, expected_policy="PROXY")
@@ -462,6 +507,12 @@ def build_template(manifest_dir: Path) -> str:
     registry_rulesets = [(policy, url) for policy, _name, url in remote_rulesets]
     if body_rulesets != registry_rulesets:
         raise ValueError("lazy-body-rules.txt and remote-rulesets.csv RULE-SET order differ")
+    governed_registry_rows = [
+        (entry["policy"], entry["name"], entry["public_url"])
+        for entry in governed_registry["sources"]
+    ]
+    if remote_rulesets != governed_registry_rows:
+        raise ValueError("remote-rulesets.csv differs from governed source registry")
 
     for domain in china_domains:
         if domain not in host_dns:
@@ -474,8 +525,9 @@ def build_template(manifest_dir: Path) -> str:
         "# Shadowrocket S5 V5 MVP public scenario template",
         "# This file contains rules, DNS, and Host logic only.",
         "# It does not contain proxy nodes, subscriptions, accounts, proxy groups, or secrets.",
-        "# Derived in part from Johnshall lazy.conf and blackmatrix7 ios_rule_script sources.",
-        "# License: CC BY-SA 4.0. See LICENSE and references/v5-mvp/upstream-sources.md.",
+        "# Derived in part from Johnshall lazy.conf and governed blackmatrix7 snapshots.",
+        "# Template license: CC BY-SA 4.0. Snapshot content remains GPL-2.0.",
+        "# See LICENSE, rulesets/v5/LICENSE.blackmatrix7-GPL-2.0.txt, and references/v5-mvp/upstream-sources.md.",
         f"# source_private_base_sha256={metadata['base_sha256']}",
         f"# manifest_revision={manifest_revision(manifest_dir)}",
         f"# counts: test_proxy={len(test_rules)}, overseas_proxy={len(overseas_rules)}, ai_proxy={len(ai_rules)}, china_direct={len(china_domains)}, remote_rulesets={len(remote_rulesets)}",
@@ -545,6 +597,8 @@ def validate_public_template(text: str) -> None:
         raise ValueError("public template contains sensitive-looking content")
     if "server:system" in text.lower():
         raise ValueError("public template must not use server:system")
+    if "blackmatrix7/ios_rule_script/master" in text:
+        raise ValueError("public template must not use direct upstream runtime RULE-SET URLs")
 
     general_settings: dict[str, str] = {}
     for raw in sections["General"]:
@@ -568,6 +622,14 @@ def validate_public_template(text: str) -> None:
         raise ValueError("QUIC allow must not enter V5 MVP")
     if last_effective_rule(text) != "FINAL,PROXY":
         raise ValueError("[Rule] last effective rule must be FINAL,PROXY")
+
+    for raw in sections["Rule"]:
+        line = raw.strip()
+        if not line.startswith("RULE-SET,"):
+            continue
+        parts = split_rule(line)
+        if len(parts) < 3 or not parts[1].startswith(governed_rulesets.RAW_BASE + "/"):
+            raise ValueError(f"RULE-SET is not governed by this project: {line}")
 
     rule_text = "\n".join(sections["Rule"])
     test_index = rule_text.find("DOMAIN-SUFFIX,browserleaks.com,PROXY")
