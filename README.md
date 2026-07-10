@@ -1,137 +1,76 @@
-# Shadowrocket S0/S1/S1.1/S2/S5 中美双市场场景验证
+# Shadowrocket V5/S5 中美双市场规则
 
-当前项目状态：A/B/C/D 保留为 DNS 泄露诊断记录，不再产出最终 v1；S0 用来测试“中国本地体验保速度、海外账号侧和未知流量走美国代理兜底”的最小闭环，S1 在 S0 基础上接入 Johnshall `lazy.conf` 的成熟 `[Rule]` 主体，S1.1 在 S1 上做规则源治理、AI 自维护和 GitHub 通知闭环，S2 只作为“严格中国 App 白名单 + 海外/未知全部代理”的安全边界参考，S5 是把已实测稳定的 V5 私有规则产品化后的最小 MVP 公开模板。
+当前项目只保留一条主线：朋友实测最稳定的 V5，以及由它脱敏生成的 S5 公开模板。
 
-S0/S1/S1.1/S2/S5 都不是“DNS 绝对隐私方案”。它允许中国白名单域名使用中国 DNS 获取更近 CDN；失败标准是海外账号域名、未知域名、AI 域名或 DNS 随机测试域名暴露到中国本地运营商 DNS。
+目标是兼顾中国本地 App 体验与海外账号访问：确认过的中国服务使用 `[Host] + DIRECT`，海外账号、AI、流媒体、测试站和未知流量优先使用 `PROXY`。项目只表述为“降低常见 DNS 泄露风险，并提供验证流程”。
 
-## 当前材料
+## 当前唯一版本
 
-- `configs/A-johnshall-sr_cnip_ad.conf`：Johnshall 原版国内外划分 + 去广告配置，作为旧 A 组记录。
-- `configs/B-nznl31-a-nomad.conf`：NZNL31 的 `a-nomad.conf` 样本，作为旧 B 组记录。
-- `configs/C-sr_cnip_ad_privacy_hardened_candidate.conf`：旧候选增强配置，A/B/C 全部失效后不进入最终。
-- `configs/D*-diagnostic-*.conf`：DNS 行为诊断配置，只保留为排查记录。
-- `configs/S0-scenario-cn-us-account-aggressive-v0.conf`：S0 最小闭环公开规则模板，不含节点和代理组，不是 final、stable 或 release。
-- `configs/S1-scenario-cn-us-lazy-rule-v0.conf`：S1 lazy 规则增强公开规则模板，不含节点和代理组，不是 final、stable 或 release。
-- `configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf`：S1.1 规则源治理增强公开模板，不含节点和代理组，不是 final、stable 或 release。
-- `configs/S2-scenario-cn-us-strict-app-whitelist-v0.conf`：S2 严格中国 App 白名单公开规则模板，不含节点和代理组，不是 final、stable 或 release。
-- `configs/S5-scenario-cn-us-v5-mvp-v0.conf`：S5 V5 MVP 公开规则模板，从 V5 清单生成，不含节点和代理组，不是 final、stable 或 release。
-- `references/v5-mvp/`：S5 清单化来源，包括中国 DIRECT、中国 Host、海外 PROXY、AI/测试站保护、远程 RULE-SET 注册表和候选观察清单。
-- `references/china-local-domain-seeds.txt`：S0/S1/S1.1/S2 `[Host]` 生成使用的中国本地域名种子表。
-- `references/ai-proxy-domain-seeds.txt`：S1.1 AI 正式代理清单，进入配置。
-- `references/ai-proxy-domain-candidates.txt`：S1.1 AI 候选清单，不自动进入配置。
-- `references/overseas-proxy-domain-seeds.txt`：S1.1 第二轮日志修正使用的海外显式代理清单，进入 Account/media guard。
-- `references/s1-1-logfix-candidates.md`：S1.1 第二轮日志里暂不进入默认配置的候选域名记录。
-- `references/rule-source-registry.md`：S1.1 外部规则源注册表。
-- `scripts/build-s0-from-johnshall.py`：从 Johnshall `sr_top500_whitelist.conf` 生成 S0 配置。
-- `scripts/build-s1-from-lazy.py`：从 Johnshall `lazy.conf` 只抽取 `[Rule]` 主体生成 S1 配置。
-- `scripts/build-s1-1-stabilized.py`：生成 S1.1 公开模板，移除 iab0x00 运行时依赖并替换 QuantumultX 路径。
-- `scripts/build-s2-strict-app-whitelist.py`：从 Johnshall `lazy.conf` 只抽取 `PROXY` 规则生成 S2 配置。
-- `scripts/build-v5-mvp-template.py`：从 `references/v5-mvp/` 清单生成 S5 V5 MVP 公开模板。
-- `scripts/merge-s0-private-config.py`：把用户本地原始完整配置和 S0/S1/S1.1/S2/S5 模板合并，输出到 `local/private-configs/` 的私有完整配置。
-- `.github/workflows/`：S1.1 每周规则源监控、Issue 通知、确认后 PR、GitHub Pages 公开模板发布。
-- `local/private-configs/`：本地私有配置区，保存原始完整配置和私有合并测试文件；该目录被忽略，不进入仓库、不公开。
-- `local/intake/`：本地输入材料区，保存桌面导入的分析文档和临时材料；该目录被忽略。
-- `docs/v5-test-iteration-notes.md`：记录 V5 之后的 DNS B、QUIC 等试错结论，防止后续误用已作废测试分支。
-- `docs/v5-mvp-user-test-feedback.md`：S5 MVP 用户导入、测试和反馈模板，不要求上传敏感截图或完整 IP。
-- `docs/v5-mvp-release-runbook.md`：S5 raw / GitHub Pages 发布闭环和红线确认门。
-- `docs/v5-mvp-completion-audit.md`：S5 MVP 完成度审计，记录已完成项和仍需授权的发布动作。
+- 本地私有 V5：`local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`
+- 私有 V5 SHA256：`D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD`
+- 公开 S5：`configs/S5-scenario-cn-us-v5-mvp-v0.conf`
+- 当前公开 S5 SHA256：`12B992F086738407E55653184DD6C7FF5FCA3740E96C4CB2B775ECDF45FB1B78`
+- 有效内容：`General=15`、`Rule=351`、`Host=381`
 
-## S0 设计口径
+本地 V5 与公开 S5 的三个有效段逐条一致。公开 S5 只增加来源、许可证和清单版本注释，不包含节点、订阅、账号或代理组。
 
-- Johnshall `sr_top500_whitelist.conf` 只作为 `[Rule]` 主体来源，不等于纯中国白名单。
-- `[Host]` 只从中国本地域名池生成：本项目种子表 + Johnshall 中明确的 `.cn` 直连域名。
-- 海外账号覆盖规则放在 Johnshall 规则前，先拦住 TikTok、Instagram、YouTube、X、Facebook、Google、OpenAI、Claude 等主域名。
-- 未知流量由 `FINAL,PROXY` 兜底。
-- S0 模板本身没有 `[Proxy]`、`[Proxy Group]` 或节点信息；如果 Shadowrocket 只能选一个配置文件，必须先生成私有合并版再导入手机。
-- 不加入 `always-ip-address = true`，不引入广告拦截、MITM、URL Rewrite。
+## 目录
 
-## S1 设计口径
+- `configs/`：只保存 S5 公开模板。
+- `references/v5-mvp/`：中国 DIRECT、Host DNS、海外/AI/测试站 PROXY、远程 RULE-SET 和候选记录。
+- `scripts/build-v5-mvp-template.py`：从清单生成 S5。
+- `scripts/check-v5-consistency.py`：核对本地 V5 与公开 S5。
+- `scripts/merge-v5-private-config.py`：可选的私有节点合并工具。
+- `tests/`：生成和合并链回归测试。
+- `local/private-configs/`：只保存当前私有 V5，不进入 Git。
 
-- S1 继续使用已验证方向：`#proxy` DoH、中国本地域名 `[Host]`、中国本地 `DIRECT` 保护、海外/未知 `PROXY` 兜底。
-- S1 只抽取 Johnshall `lazy.conf` 的 `[Rule]` 主体，不采用其 `[General]`、`[Host]`、`[URL Rewrite]`、`[MITM]`。
-- S1 保留 lazy 的远程 `RULE-SET`，用于补强 YouTube、Netflix、TikTok、OpenAI、Google、微信、抖音、小红书等成熟分流。
-- S1 的 `[Host]` 仍只从 `references/china-local-domain-seeds.txt` 生成，不从 lazy 的 `DIRECT` 规则反推 Host。
-- S1 存在远程 `RULE-SET` 加载风险；如果手机端加载失败或断网，回退到 S0 proxy DoH 版本。
+## 使用方式
 
-## S1.1 设计口径
+公开模板不包含节点。用户需要在 Shadowrocket 中自行配置节点或订阅，然后使用 S5 规则模板。
 
-- S1.1 保留 S1 已验证方向：`#proxy` DoH、中国本地域名 `[Host]`、中国本地 `DIRECT` 保护、海外/未知 `FINAL,PROXY` 兜底。
-- S1.1 不再运行时依赖 iab0x00 AI 聚合规则；AI 规则由 `references/ai-proxy-domain-seeds.txt` 生成，候选清单只监控不进配置。
-- S1.1 继续保留 blackmatrix7 Shadowrocket `RULE-SET` 作为运行时远程规则源，并纳入 `references/rule-source-registry.md` 监控。
-- Johnshall `lazy.conf` 在 S1.1 中只作为参考和差异监控来源，不自动改正式模板。
-- S1.1 通过 GitHub Actions 每周监控上游；无变化不通知，有变化或异常才创建/更新 Issue，人工确认后只创建 PR，不直接合并主分支。
-- S1.1 第二轮日志修正只改 S1.1 主线，不覆盖旧 S1 对照组；`hijack-dns` 不再劫持中国 DNS。
-- S1.1 第二轮日志修正新增海外显式代理清单，排在中国本地 `DIRECT` 前；新增中国 App 日志域名通过中国种子表生成 `[Host] + DIRECT`。
-- `itdog.cn`、`ip.cn`、`qualcomm.cn`、`qianwen.com` 暂只记录为候选，不进入默认配置。
+公开链接：
 
-## S2 设计口径
+- GitHub Pages：<https://nihongbin.github.io/Shadowrocket-gz-gaizao/S5-scenario-cn-us-v5-mvp-v0.conf>
+- raw GitHub：<https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S5-scenario-cn-us-v5-mvp-v0.conf>
 
-- S2 以手机 App 场景为第一保障对象，浏览器测试站只作为体检工具。
-- S2 只允许本项目确认的中国 App 域名直连；海外 App、AI、流媒体、测试站和未知域名统一走 `PROXY`。
-- S2 只保留 lazy 的 `PROXY` 规则，不保留 lazy 的任何 `DIRECT`、`GEOIP,CN,DIRECT` 或 `FINAL`。
-- S2 不使用 `GEOIP,CN,DIRECT`，避免“解析到中国 IP 的未知域名”自动直连。
-- S2 初始排除 `bytedance.com`、`byteimg.com`、`snssdk.com`，保留更明确的中国抖音域名。
-- S2 的代价是：未收录的中国 App 域名会走代理，可能变慢；后续通过补种子表解决。
+如果用户的完整配置把节点写在 `[Proxy]` 和 `[Proxy Group]` 中，可在本地合并：
 
-## S5 V5 MVP 设计口径
+```powershell
+python scripts\merge-v5-private-config.py `
+  --base local\private-configs\your-complete-shadowrocket.conf `
+  --output local\private-configs\your-v5-private.conf
+```
 
-- S5 的唯一基盘是 `local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`，基盘 SHA256 必须是 `D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD`。
-- S5 不使用旧 S1.1 模板、S2、DNS B、QUIC allow 或任何已作废测试分支作为基盘。
-- S5 公开模板由 `references/v5-mvp/` 清单生成，后续新增域名优先改清单，不直接手改最终 `.conf`。
-- S5 保留 V5 的关键顺序：测试站 `PROXY` 在中国 `DIRECT` 前，海外/AI/流媒体 `PROXY` 在中国 `DIRECT` 前，中国 App `DIRECT` 在远程规则和 `FINAL,PROXY` 前。
-- S5 公开模板不含 `[Proxy]`、`[Proxy Group]`、节点、订阅、账号或密钥；用户必须自备 Shadowrocket 节点或订阅。
-- DNS B Google fallback 和 QUIC allow 已作废，不进入 S5。
+合并器要求存在名为 `PROXY` 的代理组，并拒绝把私有输出写到 `local/private-configs/` 之外。
 
-## 如何继续
+## 维护流程
 
-先阅读：
+1. 根据真实日志确认域名归属。
+2. 修改 `references/v5-mvp/` 对应清单。
+3. 运行生成器更新 S5。
+4. 运行全部测试和一致性检查。
+5. 用本地 V5 对照手机实测。
+6. 明确确认后再提交和发布。
 
-- `docs/v5-test-iteration-notes.md`
-- `docs/v5-mvp-user-test-feedback.md`
-- `docs/v5-mvp-release-runbook.md`
-- `docs/v5-mvp-completion-audit.md`
-- `docs/scenario-cn-us-account-v0.md`
-- `docs/research-notes.md`
-- `docs/static-check-report.md`
-- `references/johnshall-whitelist-sources.md`
-- `references/johnshall-lazy-sources.md`
-- `references/s2-strict-app-whitelist-sources.md`
+```powershell
+python scripts\build-v5-mvp-template.py
+python -m unittest discover -s tests -v
+python scripts\build-v5-mvp-template.py --check
+python scripts\check-v5-consistency.py
+```
 
-手机测试不能直接导入公开 S0/S1/S1.1/S2/S5 模板当作完整节点配置。应先用 `scripts/merge-s0-private-config.py` 读取 `local/private-configs/` 里的原始完整配置，生成同目录下的私有完整配置，再导入 Shadowrocket。后续公开链接只能指向不含节点和代理组的公开模板，不能指向 `local/`。
+## 已知边界
 
-## 公开模板链接
+- 中国白名单域名使用 `223.5.5.5` 或 `119.29.29.29` 是设计目标，不算 DNS 泄露失败。
+- 海外、未知、AI 或测试站出现中国本地运营商 DNS 才是失败信号。
+- S5 仍运行时依赖 blackmatrix7 `master` 规则地址，上游可能在本项目没有提交时变化。
+- `17.0.0.0/8` 保留为 V5 的 Apple 直连体验设置，Apple 流量可能看到真实网络出口。
+- 旧版本已从当前文件树删除，但仍可从 Git 历史追溯；不得直接恢复为当前基盘。
 
-- GitHub 仓库：https://github.com/nihongbin/Shadowrocket-gz-gaizao
-- GitHub Pages S1.1 模板：https://nihongbin.github.io/Shadowrocket-gz-gaizao/S1-1-scenario-cn-us-lazy-stabilized-v0.conf
-- raw GitHub 备用链接：https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf
-- S5 raw GitHub 链接推送后可用：https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S5-scenario-cn-us-v5-mvp-v0.conf
-- S5 GitHub Pages 模板：https://nihongbin.github.io/Shadowrocket-gz-gaizao/S5-scenario-cn-us-v5-mvp-v0.conf
+## 文档
 
-公开链接只允许发布不含节点、订阅、账号和代理组的模板。手机实测仍以 `local/private-configs/` 下的私有完整配置为准。
-
-## 来源和许可证
-
-本项目参考：
-
-- `Johnshall/Shadowrocket-ADBlock-Rules-Forever`
-- `NZNL31/Shadowrocket-Ad-DNS-Leak-Rules`
-- `colin-chang` 原版 `a-nomad.conf`
-
-上游配置采用 Creative Commons Attribution-ShareAlike 4.0 International License。若未来公开发布改编配置，必须保留署名并使用相同协议。
-
-## 当前限制
-
-- A/B/C 三组已反馈全部失效，不能进入最终 v1。
-- D1/D2 已反馈为网络近似断开；D3 已反馈为出口正确但 DNS 全部泄露。
-- `always-ip-address = true` 暂不采纳。
-- S0/S1/S1.1/S2 仍是场景验证模板，不是最终配置。
-- S0/S1/S1.1/S2 公开模板不能单独代表手机最终测试配置；私有合并版因含节点信息不得进入仓库。
-- S1 引入远程 `RULE-SET` 依赖，若手机端无法加载远程规则，不能直接判定底层 DNS 方案失败，应回退 S0 再判断。
-- S2 更安全但可能牺牲部分中国 App 速度；如果中国 App 日志显示走代理，优先补种子表。
-- 本地 `.git` 已重新初始化为 `main`，远端 GitHub 仓库已重新创建并推送。
-- GitHub Actions 已启用：Pages 发布、每周规则源监控、Issue 通知、人工确认后 PR 更新已在线验证。
-- 当前存在一组线上模拟验证材料：Issue #1 和 PR #2，用于证明 hash 变化会通知、评论指令会开 PR、主分支不会被 Actions 直接改写。
-- 私有完整配置统一放在项目内 `local/private-configs/`，不再放桌面；`local/` 已被忽略，不得公开。
-- 当前 S1.1 日志修正版私有测试文件为 `local/private-configs/S1-1-default-lazy-stabilized-logfix.conf`，只用于本机手机实测，不进入仓库。
-- 当前手机实测主基准已回到 V5 私有完整配置：`local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`。DNS B 和 QUIC allow 两个短分支未证明有效，老倪已删除，后续不作为基盘。
-- S5 V5 MVP 已纳入 Pages workflow；推送后应同时具备 raw GitHub 链接和 GitHub Pages 链接。
+- `docs/v5-mvp-user-test-feedback.md`：手机验收和反馈模板。
+- `docs/v5-mvp-release-runbook.md`：生成、发布和回滚流程。
+- `docs/v5-test-iteration-notes.md`：已作废试验的历史结论。
+- `docs/research-notes.md`：当前技术判断和维护边界。
+- `docs/static-check-report.md`：当前静态检查结果。

@@ -11,11 +11,18 @@ The verified private V5 config is used only as the bootstrap source; do not comm
 - `china-host-dns.csv`: China Host DNS mapping. Must contain every China DIRECT domain.
 - `remote-rulesets.csv`: remote `RULE-SET` registry used by V5.
 - `lazy-body-rules.txt`: full V5 lazy body rule order used by the generated template.
-- `lazy-extra-proxy-rules.txt`: non-`RULE-SET` proxy rules inherited from the V5 lazy body.
 - `candidate-observations.md`: excluded or watch-only items.
+- `upstream-sources.md`: upstream attribution, license, and runtime dependency notes.
 
 Build the public template with:
 
 ```powershell
 python scripts\build-v5-mvp-template.py
+```
+
+Verify the public template and local V5 baseline with:
+
+```powershell
+python scripts\build-v5-mvp-template.py --check
+python scripts\check-v5-consistency.py
 ```

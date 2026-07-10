@@ -26,8 +26,38 @@ DEFAULT_OUTPUT_PATH = ROOT / "configs" / "S5-scenario-cn-us-v5-mvp-v0.conf"
 
 SENSITIVE_PATTERNS = re.compile(
     r"(ss://|ssr://|vmess://|vless://|trojan://|hysteria://)"
-    r"|(\b(token|password|secret|subscribe)\b\s*[=:])",
+    r"|(\b(token|password|secret|subscribe|subscription(?:-url)?|api[-_]?key|username)\b\s*[=:])",
     re.IGNORECASE,
+)
+
+REQUIRED_GENERAL_SETTINGS = {
+    "ipv6": "false",
+    "prefer-ipv6": "false",
+    "dns-server": (
+        "https://cloudflare-dns.com/dns-query#proxy, "
+        "https://security.cloudflare-dns.com/dns-query#proxy"
+    ),
+    "fallback-dns-server": (
+        "https://cloudflare-dns.com/dns-query#proxy, "
+        "https://security.cloudflare-dns.com/dns-query#proxy"
+    ),
+    "dns-direct-system": "false",
+    "dns-fallback-system": "false",
+    "dns-direct-fallback-proxy": "true",
+    "hijack-dns": "8.8.8.8:53, 8.8.4.4:53",
+    "block-quic": "all-proxy",
+}
+
+MANIFEST_BUILD_INPUTS = (
+    "source-metadata.txt",
+    "general.txt",
+    "test-site-proxy-rules.txt",
+    "overseas-proxy-rules.txt",
+    "ai-proxy-rules.txt",
+    "china-direct-domains.txt",
+    "china-host-dns.csv",
+    "remote-rulesets.csv",
+    "lazy-body-rules.txt",
 )
 
 RULE_TYPES_WITH_POLICY = {
@@ -101,6 +131,16 @@ def read_manifest_lines(path: Path) -> list[str]:
             continue
         output.append(line)
     return output
+
+
+def manifest_revision(manifest_dir: Path) -> str:
+    digest = hashlib.sha256()
+    for name in MANIFEST_BUILD_INPUTS:
+        digest.update(name.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update((manifest_dir / name).read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest().upper()
 
 
 def parse_host_dns(lines: list[str]) -> OrderedDict[str, str]:
@@ -197,7 +237,6 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
     ai_rules: list[str] = []
     china_domains: list[str] = []
     lazy_body_rules: list[str] = []
-    lazy_extra_rules: list[str] = []
     remote_rulesets: list[tuple[str, str, str]] = []
 
     current = None
@@ -260,8 +299,6 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
                 policy = parts[2].upper()
                 name = url.split("/Shadowrocket/")[-1].replace(".list", "")
                 remote_rulesets.append((policy, name, url))
-            else:
-                lazy_extra_rules.append(cleaned)
         else:
             raise ValueError(f"unclassified rule line: {cleaned}")
 
@@ -335,10 +372,6 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
         "# Keep this file in sync with remote-rulesets.csv when changing RULE-SET entries.",
         *unique_preserve_order(lazy_body_rules),
     ])
-    write_lines(manifest_dir / "lazy-extra-proxy-rules.txt", [
-        "# Extra non-RULE-SET proxy rules inherited from the V5 lazy body.",
-        *unique_preserve_order(lazy_extra_rules),
-    ])
     write_lines(manifest_dir / "candidate-observations.md", [
         "# V5 MVP Candidate Observations",
         "",
@@ -362,13 +395,20 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
         "- `china-host-dns.csv`: China Host DNS mapping. Must contain every China DIRECT domain.",
         "- `remote-rulesets.csv`: remote `RULE-SET` registry used by V5.",
         "- `lazy-body-rules.txt`: full V5 lazy body rule order used by the generated template.",
-        "- `lazy-extra-proxy-rules.txt`: non-`RULE-SET` proxy rules inherited from the V5 lazy body.",
         "- `candidate-observations.md`: excluded or watch-only items.",
+        "- `upstream-sources.md`: upstream attribution, license, and runtime dependency notes.",
         "",
         "Build the public template with:",
         "",
         "```powershell",
         "python scripts\\build-v5-mvp-template.py",
+        "```",
+        "",
+        "Verify the public template and local V5 baseline with:",
+        "",
+        "```powershell",
+        "python scripts\\build-v5-mvp-template.py --check",
+        "python scripts\\check-v5-consistency.py",
         "```",
     ])
 
@@ -380,7 +420,6 @@ def extract_manifests(base_path: Path, manifest_dir: Path) -> dict[str, int]:
         "host_dns": len(host_dns),
         "remote_rulesets": len(remote_rulesets),
         "lazy_body": len(lazy_body_rules),
-        "lazy_extra": len(lazy_extra_rules),
     }
 
 
@@ -435,7 +474,10 @@ def build_template(manifest_dir: Path) -> str:
         "# Shadowrocket S5 V5 MVP public scenario template",
         "# This file contains rules, DNS, and Host logic only.",
         "# It does not contain proxy nodes, subscriptions, accounts, proxy groups, or secrets.",
+        "# Derived in part from Johnshall lazy.conf and blackmatrix7 ios_rule_script sources.",
+        "# License: CC BY-SA 4.0. See LICENSE and references/v5-mvp/upstream-sources.md.",
         f"# source_private_base_sha256={metadata['base_sha256']}",
+        f"# manifest_revision={manifest_revision(manifest_dir)}",
         f"# counts: test_proxy={len(test_rules)}, overseas_proxy={len(overseas_rules)}, ai_proxy={len(ai_rules)}, china_direct={len(china_domains)}, remote_rulesets={len(remote_rulesets)}",
         "# Generated from references/v5-mvp manifests. No runtime timestamp is written.",
         "",
@@ -501,6 +543,25 @@ def validate_public_template(text: str) -> None:
         raise ValueError("public template contains private or unsupported sections")
     if SENSITIVE_PATTERNS.search(text):
         raise ValueError("public template contains sensitive-looking content")
+    if "server:system" in text.lower():
+        raise ValueError("public template must not use server:system")
+
+    general_settings: dict[str, str] = {}
+    for raw in sections["General"]:
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = [part.strip() for part in line.split("=", 1)]
+        normalized_key = key.lower()
+        if normalized_key in general_settings:
+            raise ValueError(f"duplicate [General] setting: {key}")
+        general_settings[normalized_key] = value
+    for key, expected in REQUIRED_GENERAL_SETTINGS.items():
+        actual = general_settings.get(key)
+        if actual != expected:
+            raise ValueError(
+                f"unsafe [General] setting {key}: expected {expected!r}, got {actual!r}"
+            )
     if "dns.google/dns-query#proxy" in text:
         raise ValueError("DNS B Google fallback must not enter V5 MVP")
     if "block-quic = always-allow" in text:
@@ -537,11 +598,13 @@ def main() -> int:
         output_path = args.output.resolve()
 
         if args.check:
-            if output_path.exists():
-                current = output_path.read_text(encoding="utf-8")
-                if current != rendered:
-                    print(f"output differs from generated template: {output_path}", file=sys.stderr)
-                    return 4
+            if not output_path.exists():
+                print(f"output is missing: {output_path}", file=sys.stderr)
+                return 4
+            current = output_path.read_text(encoding="utf-8")
+            if current != rendered:
+                print(f"output differs from generated template: {output_path}", file=sys.stderr)
+                return 4
             print("check=PASS")
             print("output_sha256=" + hashlib.sha256(rendered.encode("utf-8")).hexdigest().upper())
             return 0

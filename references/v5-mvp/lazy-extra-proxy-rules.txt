@@ -1,4 +1,0 @@
-# Extra non-RULE-SET proxy rules inherited from the V5 lazy body.
-DOMAIN-SUFFIX,litix.io,PROXY
-DOMAIN-SUFFIX,discomax.com,PROXY
-DOMAIN-SUFFIX,brightline.tv,PROXY

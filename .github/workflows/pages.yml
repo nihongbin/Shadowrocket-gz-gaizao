@@ -1,4 +1,4 @@
-name: Publish Public Templates
+name: Publish V5 Public Template
 
 on:
   push:
@@ -24,10 +24,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate governed S5 template
+        run: |
+          python -m unittest discover -s tests -v
+          python scripts/build-v5-mvp-template.py --check
+
       - name: Prepare public artifact
         run: |
           mkdir -p public
-          cp configs/S1-1-scenario-cn-us-lazy-stabilized-v0.conf public/S1-1-scenario-cn-us-lazy-stabilized-v0.conf
           cp configs/S5-scenario-cn-us-v5-mvp-v0.conf public/S5-scenario-cn-us-v5-mvp-v0.conf
           cat > public/index.html <<'HTML'
           <!doctype html>
@@ -37,7 +46,6 @@ jobs:
           <body>
             <h1>Shadowrocket Public Templates</h1>
             <p>These public templates contain no proxy nodes, subscriptions, accounts, or proxy groups.</p>
-            <p><a href="./S1-1-scenario-cn-us-lazy-stabilized-v0.conf">S1.1 template</a></p>
             <p><a href="./S5-scenario-cn-us-v5-mvp-v0.conf">S5 V5 MVP template</a></p>
           </body>
           </html>

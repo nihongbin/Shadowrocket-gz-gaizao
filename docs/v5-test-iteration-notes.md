@@ -6,8 +6,9 @@
 
 - 当前唯一基准：`local/private-configs/S1-default-lazy-proxy-doh-1-stable-enhanced-cnapp-v5.conf`
 - V5 SHA256：`D0478F6D913942FCF80DDC2D87650F98B50D7AC7E2D0AF49766C22804988F9DD`
-- V5 仍是本地私有完整配置，包含节点和代理组，不得进入公开模板、GitHub Pages 或仓库提交。
+- V5 仍按本地私有基盘管理；当前文件未检测到 `[Proxy]` 或 `[Proxy Group]`，但仍不得直接上传，公开内容统一由 S5 生成链输出。
 - 后续新增测试版必须从 V5 复制生成，不能从 DNS B、QUIC 或旧 S1.1 模板继续派生。
+- 2026-07-10 已从当前文件树删除所有旧测试配置；本文件只保留决策证据，不代表旧版本仍可使用。
 
 ## 已作废分支
 
