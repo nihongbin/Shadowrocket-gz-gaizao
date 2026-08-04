@@ -9,6 +9,7 @@ MONITOR_WORKFLOW = ROOT / ".github" / "workflows" / "v5-ruleset-monitor.yml"
 APPLY_WORKFLOW = ROOT / ".github" / "workflows" / "v5-apply-approved-update.yml"
 VALIDATE_WORKFLOW = ROOT / ".github" / "workflows" / "v5-validation.yml"
 PAGES_WORKFLOW = ROOT / ".github" / "workflows" / "pages.yml"
+SITE_INDEX = ROOT / "site" / "index.html"
 
 
 class V5AutomationWorkflowTests(unittest.TestCase):
@@ -70,7 +71,17 @@ class V5AutomationWorkflowTests(unittest.TestCase):
 
         self.assertIn("rulesets/v5", text)
         self.assertIn("public/rulesets/v5/index.html", text)
+        self.assertIn("cp -R site/. public/", text)
         self.assertIn("manage-v5-rulesets.py validate", text)
+
+    def test_public_site_exposes_user_download_without_private_content(self) -> None:
+        text = SITE_INDEX.read_text(encoding="utf-8")
+
+        self.assertIn("S5-scenario-cn-us-v5-mvp-v0.conf", text)
+        self.assertIn("releases/latest", text)
+        self.assertIn("s5-user-feedback.yml", text)
+        self.assertNotIn("local/private-configs", text)
+        self.assertNotIn("S1-default-lazy-proxy-doh", text)
 
 
 if __name__ == "__main__":

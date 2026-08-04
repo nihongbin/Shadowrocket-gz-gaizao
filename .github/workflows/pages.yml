@@ -38,6 +38,7 @@ jobs:
       - name: Prepare public artifact
         run: |
           mkdir -p public
+          cp -R site/. public/
           cp configs/S5-scenario-cn-us-v5-mvp-v0.conf public/S5-scenario-cn-us-v5-mvp-v0.conf
           mkdir -p public/rulesets
           cp -R rulesets/v5 public/rulesets/v5
@@ -54,19 +55,6 @@ jobs:
           </body>
           </html>
           RULES_HTML
-          cat > public/index.html <<'HTML'
-          <!doctype html>
-          <html lang="zh-CN">
-          <meta charset="utf-8">
-          <title>Shadowrocket Public Templates</title>
-          <body>
-            <h1>Shadowrocket Public Templates</h1>
-            <p>These public templates contain no proxy nodes, subscriptions, accounts, or proxy groups.</p>
-            <p><a href="./S5-scenario-cn-us-v5-mvp-v0.conf">S5 V5 MVP template</a></p>
-            <p><a href="./rulesets/v5/">Governed V5 RULE-SET snapshots</a></p>
-          </body>
-          </html>
-          HTML
 
       - name: Configure Pages
         uses: actions/configure-pages@v6

@@ -27,6 +27,8 @@
 - `scripts/merge-v5-private-config.py`：可选的私有节点合并工具，输出只能位于 `local/private-configs/`。
 - `tests/`：V5/S5 生成、校验和合并回归测试。
 - `local/private-configs/`：只保留当前私有 V5；必须被 `.gitignore` 忽略。
+- `site/`：只保存面向普通用户的 GitHub Pages 下载页及其静态资源；页面只展示项目作用、使用前提、下载、安装、验证和反馈入口，不展示私有配置或内部维护文件列表。
+- `.github/ISSUE_TEMPLATE/`：只保存普通用户反馈入口；不得要求上传完整 IP、节点名、订阅、账号或敏感截图。
 - `.github/workflows/pages.yml`：发布 S5 和受控快照镜像。
 - `.github/workflows/v5-ruleset-monitor.yml`：每日语义监控；只能读取仓库并创建/更新 Issue。
 - `.github/workflows/v5-apply-approved-update.yml`：仅接受授权确认，测试通过后创建 PR，不得自动合并。

@@ -9,6 +9,15 @@
 - `manifest_revision`：`00CB8614DD7006F3A8336323C6A14E4DA78E566447552E8D5128D630005DE94E`
 - 受控快照：`rulesets/v5/`，33 个源、6072 条有效规则。
 
+## 普通用户入口
+
+- 下载页面：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/`
+- 最新 Release：`https://github.com/nihongbin/Shadowrocket-gz-gaizao/releases/latest`
+- 最新版固定下载地址：`https://github.com/nihongbin/Shadowrocket-gz-gaizao/releases/latest/download/S5-scenario-cn-us-v5-mvp-v0.conf`
+- Pages 在线配置地址：`https://nihongbin.github.io/Shadowrocket-gz-gaizao/S5-scenario-cn-us-v5-mvp-v0.conf`
+
+下载页面只面向普通用户展示项目作用、使用前提、下载、安装、验证和反馈。内部规则源、测试和维护文档不作为页面主入口，但继续保留在公开仓库供审计。
+
 ## 本地生成和检查
 
 ```powershell
@@ -40,6 +49,19 @@ python scripts\merge-v5-private-config.py `
 3. 等待 `Validate V5 Governed Rules` 和 `Publish V5 Public Template` 完成。
 4. 验证 S5 raw、S5 Pages、至少一个 raw 快照和 Pages 快照均返回 HTTP 200。
 5. 验证 S5 raw/Pages SHA256 与本地一致，快照有效规则 hash 与注册表一致。
+
+## 正式版本发布
+
+只有当前公开 S5 已通过静态检查，并完成所需手机实测后，才能创建 Release：
+
+1. 使用 `s5-vX.Y.Z` 格式创建 tag，Release 标题使用 `S5 MVP vX.Y.Z`。
+2. 把 `configs/S5-scenario-cn-us-v5-mvp-v0.conf` 作为同名附件上传，不重新手工修改附件。
+3. Release 说明必须包含版本作用、使用前提、安装方法、SHA256 和隐私边界。
+4. Release 不得包含私有 V5、节点、订阅、账号、代理组或敏感日志。
+5. 发布后核对固定下载地址返回 HTTP 200，下载附件 SHA256 与本地 S5 一致。
+6. 更新 README 和 Pages 的版本号后重新验证，不把“完成打包”写成“新增规则已手机实测”。
+
+S5 规则内容没有变化时，创建用户下载页或 Release 只属于发布层变更，不需要重新解释为规则升级。
 
 公开链接：
 

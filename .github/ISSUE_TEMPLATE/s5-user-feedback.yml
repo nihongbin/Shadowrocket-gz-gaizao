@@ -1,0 +1,79 @@
+name: S5 使用反馈
+description: 反馈 S5 在中国 App、海外 App 或 DNS 验证中的实际表现
+title: "[S5 反馈] "
+labels:
+  - user-feedback
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请勿上传完整 IP、节点名、订阅、账号、验证码或含敏感信息的截图。只记录国家或地区、App 页面和日志中的域名策略。
+  - type: input
+    id: version
+    attributes:
+      label: 使用版本
+      description: 填写配置文件名或 manifest_revision。
+      placeholder: S5-scenario-cn-us-v5-mvp-v0.conf
+    validations:
+      required: true
+  - type: dropdown
+    id: network
+    attributes:
+      label: 网络环境
+      options:
+        - Wi-Fi
+        - 蜂窝网络
+        - Wi-Fi 和蜂窝都出现
+    validations:
+      required: true
+  - type: input
+    id: node_region
+    attributes:
+      label: 节点国家或地区
+      description: 只写国家或地区，不写节点名、地址或完整 IP。
+      placeholder: 美国
+    validations:
+      required: true
+  - type: input
+    id: app_page
+    attributes:
+      label: App 和具体页面
+      placeholder: X 的某个帖子详情页
+    validations:
+      required: true
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: 问题表现
+      options:
+        - 打不开
+        - 首次慢，第二次快
+        - 图片加载慢
+        - 视频加载慢
+        - 登录慢或失败
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: routing
+    attributes:
+      label: 相关域名和命中策略
+      description: 填写日志中的域名，以及 DIRECT、PROXY 或 FINAL,PROXY。不要填写完整 IP。
+      placeholder: example.com -> PROXY
+  - type: dropdown
+    id: dns_operator
+    attributes:
+      label: 海外或测试站是否出现中国本地运营商 DNS
+      options:
+        - 没有
+        - 有
+        - 未观察
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私确认
+      options:
+        - label: 我没有在反馈中填写完整 IP、节点名、订阅、账号或其他敏感信息。
+          required: true

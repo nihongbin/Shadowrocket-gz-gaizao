@@ -1,6 +1,6 @@
 # V5/S5 Static Check Report
 
-最后更新：2026-07-10。
+最后更新：2026-08-04。
 
 本报告只证明本地文件、生成链和公开模板的静态状态，不替代 iPhone 实机验证。
 
@@ -39,6 +39,16 @@
 - PASS - 批准 workflow 测试通过后只创建 PR；没有自动合并命令。
 - PASS - PR/手动 validation workflow 覆盖全部公开生成和快照检查。
 - PASS - 私有合并器只允许输出到 `local/private-configs/`，并要求名为 `PROXY` 的代理组。
+
+## 普通用户发布层
+
+- PASS - `site/` 下载页只展示项目作用、使用前提、下载、安装、验证、版本和反馈。
+- PASS - Pages workflow 从受控 `site/` 复制首页，不再在 workflow 中临时拼接普通用户 HTML。
+- PASS - 页面同时提供 `.conf` 下载和在线导入链接，README 提供下载页、最新版附件和版本记录入口。
+- PASS - 用户反馈表单不要求完整 IP、节点名、订阅、账号或敏感截图。
+- PASS - 页面和反馈表单不包含私有 V5 路径、节点、订阅、账号、token、password 或 secret。
+- PASS - 1440 x 900 桌面视口和 390 x 844 手机视口均无横向溢出；复制导入链接按钮返回成功状态。
+- PASS - 本轮发布层修改没有改变公开 S5，SHA256 仍为 `80F81FEF8619F4BD995D55C8020E5C0CF2C717DF8487050CDE75812AAE0A732A`。
 
 ## 本地命令
 
