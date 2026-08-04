@@ -1,6 +1,6 @@
-# S5 中美双市场规则
+# S5 Shadowrocket规则
 
-面向 iPhone + Shadowrocket 的中国本地与美国代理分流模板。
+面向 iPhone + Shadowrocket 的中国本地与代理分流模板。
 
 确认过的中国 App 和中国服务优先直连；海外账号、AI、流媒体、测试站和未知流量交给代理兜底。S5 只表述为“降低常见 DNS 泄露风险，并提供验证流程”。
 
