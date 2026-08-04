@@ -63,6 +63,14 @@ python scripts\merge-v5-private-config.py `
 
 S5 规则内容没有变化时，创建用户下载页或 Release 只属于发布层变更，不需要重新解释为规则升级。
 
+当前普通用户首个正式版本：
+
+- Release：`S5 MVP v0.1.0`
+- Tag：`s5-v0.1.0`
+- 发布提交：`0227bbe`
+- Pages run：`30881177670`
+- Release 附件、Pages 配置和 raw 配置 SHA256 均为 `80F81FEF8619F4BD995D55C8020E5C0CF2C717DF8487050CDE75812AAE0A732A`。
+
 公开链接：
 
 - raw：`https://raw.githubusercontent.com/nihongbin/Shadowrocket-gz-gaizao/main/configs/S5-scenario-cn-us-v5-mvp-v0.conf`

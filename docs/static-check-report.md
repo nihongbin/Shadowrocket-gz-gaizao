@@ -49,6 +49,11 @@
 - PASS - 页面和反馈表单不包含私有 V5 路径、节点、订阅、账号、token、password 或 secret。
 - PASS - 1440 x 900 桌面视口和 390 x 844 手机视口均无横向溢出；复制导入链接按钮返回成功状态。
 - PASS - 本轮发布层修改没有改变公开 S5，SHA256 仍为 `80F81FEF8619F4BD995D55C8020E5C0CF2C717DF8487050CDE75812AAE0A732A`。
+- PASS - 用户发布层提交 `0227bbe` 已推送，Pages workflow run `30881177670` 成功。
+- PASS - `S5 MVP v0.1.0` / `s5-v0.1.0` 已发布为非草稿、非预发布的最新 Release。
+- PASS - 下载页、Pages 配置、raw 配置和 Release 固定下载地址均返回 HTTP 200。
+- PASS - Pages、raw 和 Release 附件 SHA256 均为 `80F81FEF8619F4BD995D55C8020E5C0CF2C717DF8487050CDE75812AAE0A732A`。
+- PASS - 仓库主页已设置普通用户描述、Pages 首页地址和 Shadowrocket / iOS / DNS / ruleset topics。
 
 ## 本地命令
 

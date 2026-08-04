@@ -60,3 +60,4 @@
 - README 改为普通用户优先，内部维护信息收进折叠区；GitHub Code 页面受平台限制仍会显示已提交目录，不能逐项隐藏。
 - S5 反馈改用 GitHub Issue 表单，不要求完整 IP、节点名、订阅、账号或敏感截图。
 - 私有 V5 和本地合并输出继续留在被 Git 忽略的 `local/private-configs/`，没有进入用户页面或 Release。
+- `S5 MVP v0.1.0` 已作为首个正式 Release 发布；Pages、raw 和 Release 附件均返回 HTTP 200，配置 SHA256 与本地 S5 一致。
